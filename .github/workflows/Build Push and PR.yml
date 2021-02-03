@@ -33,4 +33,4 @@ jobs:
       if: success()
       with:
           name: GeyserSkinManager
-          path: target/
+          path: spigot/target/
