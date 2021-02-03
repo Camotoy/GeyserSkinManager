@@ -41,7 +41,7 @@ jobs:
       if: success()
       with:
           name: GeyserSM
-          path: target/
+          path: spigot/target/GeyserSkinManager-Spigot.jar
       
     - name: Create Release
       id: create_release
@@ -61,6 +61,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: target/
-        asset_name: GeyserSkinManager.jar
+        asset_path: spigot/target/
+        asset_name: GeyserSkinManager-Spigot.jar
         asset_content_type: application/zip
