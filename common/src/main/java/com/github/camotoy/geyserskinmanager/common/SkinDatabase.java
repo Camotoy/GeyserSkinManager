@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,12 +14,15 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class SkinDatabase {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final DefaultPrettyPrinter PRETTY_PRINTER = new DefaultPrettyPrinter();
 
-    private final Map<UUID, PlayerEntry> playerEntries = new HashMap<>();
+    private final Cache<UUID, PlayerEntry> playerEntries = CacheBuilder.newBuilder()
+            .expireAfterAccess(1, TimeUnit.DAYS)
+            .build();
     private final File baseFileLocation;
 
     public SkinDatabase(File baseFileLocation) {
@@ -53,7 +58,7 @@ public class SkinDatabase {
     }
 
     public PlayerEntry getPlayerEntry(UUID uuid) {
-        PlayerEntry entry = playerEntries.get(uuid);
+        PlayerEntry entry = playerEntries.getIfPresent(uuid);
         if (entry == null) {
             return loadPlayerInformation(uuid);
         } else {
@@ -80,6 +85,10 @@ public class SkinDatabase {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void clear() {
+        playerEntries.invalidateAll();
     }
 
 }
