@@ -3,10 +3,8 @@ package com.github.camotoy.geyserskinmanager.bungeecord;
 import com.github.camotoy.geyserskinmanager.common.*;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetriever;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.GeyserSkinRetriever;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
-import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -25,6 +23,10 @@ public class BungeecordEventListener implements Listener {
         this.database = new SkinDatabase(plugin.getDataFolder());
         this.plugin = plugin;
         this.skinRetriever = new GeyserSkinRetriever();
+    }
+
+    public void shutdown() {
+        this.database.clear();
     }
 
     @EventHandler

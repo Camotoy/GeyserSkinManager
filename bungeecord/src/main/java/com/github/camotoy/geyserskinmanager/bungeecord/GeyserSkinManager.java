@@ -3,6 +3,7 @@ package com.github.camotoy.geyserskinmanager.bungeecord;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public final class GeyserSkinManager extends Plugin {
+    private BungeecordEventListener listener;
 
     @Override
     public void onEnable() {
@@ -11,11 +12,14 @@ public final class GeyserSkinManager extends Plugin {
             getDataFolder().mkdirs();
         }
 
-        getProxy().getPluginManager().registerListener(this, new BungeecordEventListener(this));
+        this.listener = new BungeecordEventListener(this);
+        getProxy().getPluginManager().registerListener(this, this.listener);
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        if (this.listener != null) {
+            this.listener.shutdown();
+        }
     }
 }
