@@ -102,7 +102,7 @@ public abstract class EventListener implements Listener, PluginMessageListener {
 
     @Override
     public void onPluginMessageReceived(@Nonnull String channel, @Nonnull Player player, @Nonnull byte[] message) {
-        if (!channel.equals("geyserskinmanager:skin")) {
+        if (!channel.equals(Constants.SKIN_PLUGIN_MESSAGE_NAME)) {
             return;
         }
 
