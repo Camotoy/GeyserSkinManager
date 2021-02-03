@@ -106,8 +106,6 @@ public abstract class EventListener implements Listener, PluginMessageListener {
             return;
         }
 
-        System.out.println("Plugin message received!");
-
         try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(message))) {
             int version = in.readInt();
             if (version != Constants.PLUGIN_MESSAGE_VERSION) {
