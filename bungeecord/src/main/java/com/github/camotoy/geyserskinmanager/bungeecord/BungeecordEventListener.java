@@ -80,14 +80,10 @@ public class BungeecordEventListener implements Listener {
                     uploadResult.getResponse().get("signature").getAsString(), false);
             playerEntryToSave.getSkinEntries().add(skinEntry);
 
-            try {
-                sendSkin(player, server, skinEntry);
+            sendSkin(player, server, skinEntry);
 
-                // Save the information so we don't have to upload skins to Mineskin again
-                database.savePlayerInformation(playerEntryToSave);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            // Save the information so we don't have to upload skins to Mineskin again
+            database.savePlayerInformation(playerEntryToSave);
         });
     }
 

@@ -89,14 +89,10 @@ public abstract class EventListener implements Listener, PluginMessageListener {
             SkinEntry skinEntry = new SkinEntry(skin.rawData, uploadResult.getResponse().get("value").getAsString(), uploadResult.getResponse().get("signature").getAsString(), false);
             playerEntryToSave.getSkinEntries().add(skinEntry);
 
-            try {
-                setSkin(profile, player, skinEntry);
+            setSkin(profile, player, skinEntry);
 
-                // Save the information so we don't have to upload skins to Mineskin again
-                database.savePlayerInformation(playerEntryToSave);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            // Save the information so we don't have to upload skins to Mineskin again
+            database.savePlayerInformation(playerEntryToSave);
         });
     }
 
