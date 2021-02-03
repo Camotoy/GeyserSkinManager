@@ -5,7 +5,8 @@ There is currently no config - drop in and it works!
 Known caveats:
 
 - Only tested on Paper and Spigot 1.16+. 1.13 might break, but this will be fixed in the future.
-- If using without BungeeCord, this plugin requires Geyser-Spigot installed on the server; Floodgate alone will not work
+- If using without BungeeCord, this plugin requires Geyser-Spigot installed on the server; Floodgate alone will not work.
+- If using with BungeeCord, Geyser-BungeeCord must be installed on the BungeeCord server.
 - Persona skins are not supported
 
 How to set up BungeeCord:
