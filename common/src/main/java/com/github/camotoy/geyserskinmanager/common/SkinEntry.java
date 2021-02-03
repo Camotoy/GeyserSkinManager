@@ -14,6 +14,12 @@ public class SkinEntry {
         this.javaSkinSignature = javaSkinSignature;
     }
 
+    public SkinEntry(String javaSkinValue, String javaSkinSignature) {
+        this.bedrockBase64Skin = "";
+        this.javaSkinValue = javaSkinValue;
+        this.javaSkinSignature = javaSkinSignature;
+    }
+
     public String getBedrockBase64Skin() {
         return bedrockBase64Skin;
     }
