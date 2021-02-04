@@ -9,18 +9,19 @@
         <groupId>com.github.camotoy</groupId>
         <version>1.1-SNAPSHOT</version>
     </parent>
+    <artifactId>bungeecord</artifactId>
+    <packaging>jar</packaging>
 
-    <name>GeyserSkinManager-Spigot</name>
+    <name>GeyserSkinManager-BungeeCord</name>
 
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <artifactId>spigot</artifactId>
-    <packaging>jar</packaging>
     <build>
-        <finalName>GeyserSkinManager-Spigot</finalName>
+        <finalName>GeyserSkinManager-BungeeCord</finalName>
+        <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -40,10 +41,6 @@
                         <relocation>
                             <pattern>com.fasterxml.jackson</pattern>
                             <shadedPattern>com.github.camotoy.relocations.jackson</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>io.papermc.lib</pattern>
-                            <shadedPattern>com.github.camotoy.relocations.paperlib</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -70,44 +67,23 @@
 
     <repositories>
         <repository>
-            <id>papermc-repo</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
-        </repository>
-        <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>minecraft-libraries</id>
-            <url>https://libraries.minecraft.net/</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-api</artifactId>
+            <version>1.16-R0.4-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github.camotoy</groupId>
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.papermc</groupId>
-            <artifactId>paperlib</artifactId>
-            <version>1.0.6</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- For Spigot skin changing -->
-        <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>authlib</artifactId>
-            <version>1.5.21</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

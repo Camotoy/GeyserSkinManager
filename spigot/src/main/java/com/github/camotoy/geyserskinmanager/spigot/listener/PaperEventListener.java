@@ -5,12 +5,13 @@ import com.github.camotoy.geyserskinmanager.common.*;
 import com.github.camotoy.geyserskinmanager.spigot.GeyserSkinManager;
 import com.github.camotoy.geyserskinmanager.spigot.profile.MinecraftProfileWrapper;
 import com.github.camotoy.geyserskinmanager.spigot.profile.PaperProfileWrapper;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PaperEventListener extends EventListener {
-    public PaperEventListener(GeyserSkinManager plugin) {
-        super(plugin);
+    public PaperEventListener(GeyserSkinManager plugin, boolean bungeeCordMode) {
+        super(plugin, bungeeCordMode);
     }
 
     @EventHandler
@@ -23,5 +24,10 @@ public class PaperEventListener extends EventListener {
                 uploadOrRetrieveSkin(profile, event.getPlayer(), skin);
             }
         }
+    }
+
+    @Override
+    public MinecraftProfileWrapper getMinecraftProfileWrapper(Player player) {
+        return new PaperProfileWrapper(player.getPlayerProfile());
     }
 }

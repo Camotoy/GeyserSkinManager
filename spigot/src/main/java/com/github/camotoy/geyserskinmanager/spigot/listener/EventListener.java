@@ -9,17 +9,33 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 
-public abstract class EventListener implements Listener {
+import javax.annotation.Nonnull;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.UUID;
+
+public abstract class EventListener implements Listener, PluginMessageListener {
     protected final SkinDatabase database;
     protected final GeyserSkinManager plugin;
-    protected final BedrockSkinRetriever skinRetriever = new GeyserSkinRetriever();
+    protected final BedrockSkinRetriever skinRetriever;
     protected final SkinUploader skinUploader = new SkinUploader();
     private boolean useNewHidePlayerMethods;
 
-    public EventListener(GeyserSkinManager plugin) {
+    public EventListener(GeyserSkinManager plugin, boolean bungeeCordMode) {
         this.plugin = plugin;
-        this.database = new SkinDatabase(plugin.getDataFolder());
+
+        if (bungeeCordMode) {
+            // BungeeCord takes care of the database, so we don't need to
+            this.database = null;
+            this.skinRetriever = null;
+        } else {
+            this.database = new SkinDatabase(plugin.getDataFolder());
+            this.skinRetriever = new GeyserSkinRetriever();
+        }
+
         try {
             Player.class.getMethod("hidePlayer", Plugin.class, Player.class);
             this.useNewHidePlayerMethods = true;
@@ -29,7 +45,9 @@ public abstract class EventListener implements Listener {
     }
 
     public void shutdown() {
-        database.clear();
+        if (database != null) {
+            database.clear();
+        }
     }
 
     protected void uploadOrRetrieveSkin(MinecraftProfileWrapper profile, Player player, RawSkin skin) {
@@ -71,16 +89,36 @@ public abstract class EventListener implements Listener {
             SkinEntry skinEntry = new SkinEntry(skin.rawData, uploadResult.getResponse().get("value").getAsString(), uploadResult.getResponse().get("signature").getAsString(), false);
             playerEntryToSave.getSkinEntries().add(skinEntry);
 
-            try {
-                setSkin(profile, player, skinEntry);
+            setSkin(profile, player, skinEntry);
 
-                // Save the information so we don't have to upload skins to Mineskin again
-                database.savePlayerInformation(playerEntryToSave);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            // Save the information so we don't have to upload skins to Mineskin again
+            database.savePlayerInformation(playerEntryToSave);
         });
     }
+
+    @Override
+    public void onPluginMessageReceived(@Nonnull String channel, @Nonnull Player player, @Nonnull byte[] message) {
+        if (!channel.equals(Constants.SKIN_PLUGIN_MESSAGE_NAME)) {
+            return;
+        }
+
+        try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(message))) {
+            int version = in.readInt();
+            if (version != Constants.PLUGIN_MESSAGE_VERSION) {
+                plugin.getLogger().warning("Received a plugin message with an invalid version! Make sure that GeyserSkinManager is updated on both BungeeCord and backend servers!");
+                return;
+            }
+            Player bedrockPlayer = Bukkit.getPlayer(new UUID(in.readLong(), in.readLong()));
+            String value = in.readUTF();
+            String signature = in.readUTF();
+            SkinEntry skinEntry = new SkinEntry(value, signature);
+            setSkin(getMinecraftProfileWrapper(bedrockPlayer), bedrockPlayer, skinEntry);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public abstract MinecraftProfileWrapper getMinecraftProfileWrapper(Player player);
 
     protected void setSkin(MinecraftProfileWrapper profile, Player player, SkinEntry skinEntry) {
         profile.applyTexture(skinEntry.getJavaSkinValue(), skinEntry.getJavaSkinSignature());

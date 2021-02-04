@@ -17,6 +17,22 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
+    public RawSkin getBedrockSkin(String name) {
+        GeyserSession session = null;
+        for (GeyserSession otherSession : GeyserConnector.getInstance().getPlayers()) {
+            if (name.equals(otherSession.getName())) {
+                session = otherSession;
+                break;
+            }
+        }
+        if (session == null) {
+            return null;
+        }
+
+        return getAndTransformImage(session.getClientData());
+    }
+
+    @Override
     public RawSkin getBedrockSkin(UUID uuid) {
         GeyserSession session = GeyserConnector.getInstance().getPlayerByUuid(uuid);
         if (session == null) {
@@ -24,6 +40,11 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
         }
 
         return getAndTransformImage(session.getClientData());
+    }
+
+    @Override
+    public boolean isBedrockPlayer(UUID uuid) {
+        return GeyserConnector.getInstance().getPlayerByUuid(uuid) != null;
     }
 
     /**
