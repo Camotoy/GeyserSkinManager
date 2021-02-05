@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class SpigotEventListener extends EventListener {
+public class SpigotEventListener extends SpigotPlatformEventListener {
     private final Method getProfileMethod;
 
     public SpigotEventListener(GeyserSkinManager plugin, boolean bungeeCordMode) {
@@ -36,6 +36,10 @@ public class SpigotEventListener extends EventListener {
                 MinecraftProfileWrapper profile = new GameProfileWrapper(gameProfile);
                 uploadOrRetrieveSkin(profile, event.getPlayer(), skin);
             }
+        }
+        if (skin != null || skinRetriever.isBedrockPlayer(event.getPlayer().getUniqueId())) {
+            // Send cape even if the player has a skin or the skin cannot be sent
+            capeListener.onBedrockPlayerJoin(event.getPlayer());
         }
     }
 

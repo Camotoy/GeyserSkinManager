@@ -14,12 +14,14 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class SkinDatabase {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final DefaultPrettyPrinter PRETTY_PRINTER = new DefaultPrettyPrinter();
 
+    private final Map<UUID, byte[]> capeEntries = new ConcurrentHashMap<>();
     private final Cache<UUID, PlayerEntry> playerEntries = CacheBuilder.newBuilder()
             .expireAfterAccess(1, TimeUnit.DAYS)
             .build();
@@ -87,7 +89,20 @@ public class SkinDatabase {
         return null;
     }
 
+    public void addCape(UUID uuid, byte[] payload) {
+        capeEntries.put(uuid, payload);
+    }
+
+    public Set<Map.Entry<UUID, byte[]>> getCapes() {
+        return capeEntries.entrySet();
+    }
+
+    public void removeCape(UUID uuid) {
+        capeEntries.remove(uuid);
+    }
+
     public void clear() {
+        capeEntries.clear();
         playerEntries.invalidateAll();
     }
 
