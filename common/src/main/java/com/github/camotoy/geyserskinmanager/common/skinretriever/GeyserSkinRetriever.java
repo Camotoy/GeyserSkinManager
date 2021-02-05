@@ -3,7 +3,6 @@ package com.github.camotoy.geyserskinmanager.common.skinretriever;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.camotoy.geyserskinmanager.common.RawCape;
 import com.github.camotoy.geyserskinmanager.common.RawSkin;
-import com.google.common.base.Charsets;
 import org.geysermc.connector.GeyserConnector;
 import org.geysermc.connector.network.session.GeyserSession;
 import org.geysermc.connector.network.session.auth.BedrockClientData;
@@ -11,6 +10,7 @@ import org.geysermc.connector.skin.SkinProvider;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -71,11 +71,14 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
             System.out.println("Persona skins are not yet supported, sorry!");
             return null;
         }
-        boolean alex = isAlex(clientData);
+        String geometryName = new String(Base64.getDecoder().decode(clientData.getGeometryName()), StandardCharsets.UTF_8);
+        boolean alex = isAlex(geometryName);
         return new RawSkin(
                 clientData.getSkinImageWidth(),
                 clientData.getSkinImageHeight(),
-                image, alex, clientData.getSkinData()
+                image, alex, geometryName,
+                new String(Base64.getDecoder().decode(clientData.getGeometryData()), StandardCharsets.UTF_8),
+                clientData.getSkinData()
         );
     }
 
@@ -101,11 +104,10 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
         return skin;
     }
 
-    private boolean isAlex(BedrockClientData clientData) {
+    private boolean isAlex(String geometryName) {
         try {
-            byte[] bytes = Base64.getDecoder().decode(clientData.getGeometryName().getBytes(Charsets.UTF_8));
-            String geometryName = OBJECT_MAPPER.readTree(bytes).get("geometry").get("default").asText();
-            return "geometry.humanoid.customSlim".equals(geometryName);
+            String defaultGeometryName = OBJECT_MAPPER.readTree(geometryName).get("geometry").get("default").asText();
+            return "geometry.humanoid.customSlim".equals(defaultGeometryName);
         } catch (Exception exception) {
             exception.printStackTrace();
             return false;

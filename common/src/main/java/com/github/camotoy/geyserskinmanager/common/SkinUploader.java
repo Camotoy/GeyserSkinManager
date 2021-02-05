@@ -54,10 +54,10 @@ public final class SkinUploader {
             }
         }
 
-        SkinModel model = rawSkin.alex ? SkinModel.ALEX : SkinModel.STEVE;
-
-        String url = UPLOAD_URL + getUploadUrlParameters(model);
         BufferedImage image = SkinUtils.toBufferedImage(rawSkin);
+
+        SkinModel model = rawSkin.alex ? SkinModel.ALEX : SkinModel.STEVE;
+        String url = UPLOAD_URL + getUploadUrlParameters(model);
 
         try {
             UploadResult result = parseAndHandleResponse(HttpUtils.post(url, image));

@@ -2,7 +2,6 @@ package com.github.camotoy.geyserskinmanager.common;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.cache.Cache;
@@ -18,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class SkinDatabase {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final DefaultPrettyPrinter PRETTY_PRINTER = new DefaultPrettyPrinter();
 
     private final Map<UUID, byte[]> capeEntries = new ConcurrentHashMap<>();
@@ -39,21 +37,36 @@ public class SkinDatabase {
         String playerUuid = entry.getPlayerUuid().toString();
         File playerFileLocation = baseFileLocation.toPath().resolve(playerUuid + ".json").toFile();
 
-        ObjectNode node = OBJECT_MAPPER.createObjectNode();
+        ObjectNode node = SkinUtils.OBJECT_MAPPER.createObjectNode();
         node.put("playerUuid", playerUuid);
-        ArrayNode jsonSkinEntries = OBJECT_MAPPER.createArrayNode();
+        ArrayNode jsonSkinEntries =  SkinUtils.OBJECT_MAPPER.createArrayNode();
+
+        while (entry.getSkinEntries().size() > 5) { // Make this number a config option in the future?
+            // Remove old skin entries
+            long oldestDate = Long.MAX_VALUE;
+            SkinEntry oldestSkinEntry = null;
+            for (SkinEntry skinEntry : entry.getSkinEntries()) {
+                if (oldestDate > skinEntry.getDateAdded()) {
+                    oldestDate = skinEntry.getDateAdded();
+                    oldestSkinEntry = skinEntry;
+                }
+            }
+            entry.getSkinEntries().remove(oldestSkinEntry);
+        }
+
         for (SkinEntry skinEntry : entry.getSkinEntries()) {
-            ObjectNode jsonSkinEntry = OBJECT_MAPPER.createObjectNode();
+            ObjectNode jsonSkinEntry =  SkinUtils.OBJECT_MAPPER.createObjectNode();
             jsonSkinEntry.put("bedrockSkin", skinEntry.getBedrockBase64Skin());
             jsonSkinEntry.put("javaSkinValue", skinEntry.getJavaSkinValue());
             jsonSkinEntry.put("javaSkinSignature", skinEntry.getJavaSkinSignature());
+            jsonSkinEntry.put("dateAdded", skinEntry.getDateAdded());
             jsonSkinEntries.add(jsonSkinEntry);
         }
         node.set("skinEntries", jsonSkinEntries);
 
         try (OutputStream outputStream = Files.newOutputStream(playerFileLocation.toPath(),
                 StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
-            OBJECT_MAPPER.writer(PRETTY_PRINTER).writeValue(outputStream, node);
+            SkinUtils.OBJECT_MAPPER.writer(PRETTY_PRINTER).writeValue(outputStream, node);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,11 +87,20 @@ public class SkinDatabase {
             return null;
         }
         try {
-            JsonNode node = OBJECT_MAPPER.readTree(playerFileLocation);
+            JsonNode node =  SkinUtils.OBJECT_MAPPER.readTree(playerFileLocation);
             JsonNode jsonSkinEntries = node.get("skinEntries");
             List<SkinEntry> skinEntries = new ArrayList<>();
             for (JsonNode entry : jsonSkinEntries) {
-                skinEntries.add(new SkinEntry(entry.get("bedrockSkin").asText(), entry.get("javaSkinValue").asText(), entry.get("javaSkinSignature").asText(), true));
+                long dateAdded;
+                JsonNode jsonDateAdded = entry.get("dateAdded");
+                if (jsonDateAdded != null) {
+                    dateAdded = jsonDateAdded.asLong();
+                } else {
+                    continue; // Pre-1.3-SNAPSHOT - Don't load these in as their geometry might not have been saved
+                }
+
+                skinEntries.add(new SkinEntry(entry.get("bedrockSkin").asText(), entry.get("javaSkinValue").asText(),
+                        entry.get("javaSkinSignature").asText(), true, dateAdded));
             }
             PlayerEntry playerEntry = new PlayerEntry(UUID.fromString(node.get("playerUuid").asText()), skinEntries);
             playerEntries.put(uuid, playerEntry);

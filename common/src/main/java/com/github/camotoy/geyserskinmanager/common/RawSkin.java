@@ -30,13 +30,17 @@ public final class RawSkin {
     public int height;
     public byte[] data;
     public boolean alex;
+    public String geometryName;
+    public String geometry;
     public String rawData;
 
-    public RawSkin(int width, int height, byte[] data, boolean alex, String rawData) {
+    public RawSkin(int width, int height, byte[] data, boolean alex, String geometryName, String geometry, String rawData) {
         this.width = width;
         this.height = height;
         this.data = data;
         this.alex = alex;
+        this.geometryName = geometryName;
+        this.geometry = geometry;
         this.rawData = rawData;
     }
 }
