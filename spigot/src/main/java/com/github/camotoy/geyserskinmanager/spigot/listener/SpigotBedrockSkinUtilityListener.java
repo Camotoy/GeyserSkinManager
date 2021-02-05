@@ -1,8 +1,8 @@
 package com.github.camotoy.geyserskinmanager.spigot.listener;
 
-import com.github.camotoy.geyserskinmanager.common.platform.BedrockSkinUtilityListener;
 import com.github.camotoy.geyserskinmanager.common.Constants;
 import com.github.camotoy.geyserskinmanager.common.SkinDatabase;
+import com.github.camotoy.geyserskinmanager.common.platform.BedrockSkinUtilityListener;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetriever;
 import com.github.camotoy.geyserskinmanager.spigot.GeyserSkinManager;
 import org.bukkit.entity.Player;
@@ -23,6 +23,22 @@ public class SpigotBedrockSkinUtilityListener extends BedrockSkinUtilityListener
         this.plugin = plugin;
     }
 
+    public void addPluginMessageChannel(Player player, String channelName) {
+        // plz
+        if (this.addChannelMethod == null) {
+            try {
+                this.addChannelMethod = player.getClass().getMethod("addChannel", String.class);
+            } catch (Exception e) {
+                throw new RuntimeException("Could not find the channel field for player!" + e);
+            }
+        }
+        try {
+            this.addChannelMethod.invoke(player, channelName);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onPluginMessageReceived(@Nonnull String channel, @Nonnull Player player, @Nonnull byte[] message) {
         if (!channel.equals(Constants.BEDROCK_SKIN_UTILITY_INIT_NAME)) {
@@ -32,19 +48,7 @@ public class SpigotBedrockSkinUtilityListener extends BedrockSkinUtilityListener
         if (!moddedPlayers.containsKey(player.getUniqueId())) {
             moddedPlayers.put(player.getUniqueId(), player);
 
-            // plz
-            if (this.addChannelMethod == null) {
-                try {
-                    this.addChannelMethod = player.getClass().getMethod("addChannel", String.class);
-                } catch (Exception e) {
-                    throw new RuntimeException("Could not find the channel field for player!" + e);
-                }
-            }
-            try {
-                this.addChannelMethod.invoke(player, Constants.CAPE_PLUGIN_MESSAGE_NAME);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            addPluginMessageChannel(player, Constants.CAPE_PLUGIN_MESSAGE_NAME);
 
             sendAllCapes(player);
         }

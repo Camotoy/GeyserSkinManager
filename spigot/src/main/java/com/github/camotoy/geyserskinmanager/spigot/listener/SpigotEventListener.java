@@ -1,5 +1,6 @@
 package com.github.camotoy.geyserskinmanager.spigot.listener;
 
+import com.github.camotoy.geyserskinmanager.common.Constants;
 import com.github.camotoy.geyserskinmanager.common.RawSkin;
 import com.github.camotoy.geyserskinmanager.spigot.GeyserSkinManager;
 import com.github.camotoy.geyserskinmanager.spigot.profile.GameProfileWrapper;
@@ -37,6 +38,9 @@ public class SpigotEventListener extends SpigotPlatformEventListener {
                 uploadOrRetrieveSkin(profile, event.getPlayer(), skin);
             }
         }
+        capeListener.addPluginMessageChannel(event.getPlayer(), Constants.INIT_PLUGIN_MESSAGE_NAME);
+        event.getPlayer().sendPluginMessage(plugin, Constants.INIT_PLUGIN_MESSAGE_NAME, new byte[0]);
+
         if (skin != null || skinRetriever.isBedrockPlayer(event.getPlayer().getUniqueId())) {
             // Send cape even if the player has a skin or the skin cannot be sent
             capeListener.onBedrockPlayerJoin(event.getPlayer());

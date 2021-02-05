@@ -8,6 +8,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
@@ -21,6 +22,11 @@ public class BungeecordBedrockSkinUtilityListener extends BedrockSkinUtilityList
 
     public BungeecordBedrockSkinUtilityListener(SkinDatabase database, BedrockSkinRetriever skinRetriever) {
         super(database, skinRetriever);
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PostLoginEvent event) {
+        event.getPlayer().sendData(Constants.INIT_PLUGIN_MESSAGE_NAME, new byte[0]);
     }
 
     @EventHandler

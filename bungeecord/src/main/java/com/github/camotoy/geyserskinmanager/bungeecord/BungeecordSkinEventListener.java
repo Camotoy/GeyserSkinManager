@@ -29,6 +29,7 @@ public class BungeecordSkinEventListener implements Listener {
 
         this.plugin.getProxy().registerChannel(Constants.BEDROCK_SKIN_UTILITY_INIT_NAME);
         this.plugin.getProxy().registerChannel(Constants.CAPE_PLUGIN_MESSAGE_NAME);
+        this.plugin.getProxy().registerChannel(Constants.INIT_PLUGIN_MESSAGE_NAME);
         this.plugin.getProxy().getPluginManager().registerListener(this.plugin, this.capeListener);
     }
 
