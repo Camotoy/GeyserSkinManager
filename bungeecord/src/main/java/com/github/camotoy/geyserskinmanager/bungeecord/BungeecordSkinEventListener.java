@@ -5,6 +5,7 @@ import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetr
 import com.github.camotoy.geyserskinmanager.common.skinretriever.GeyserSkinRetriever;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -13,16 +14,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class BungeecordEventListener implements Listener {
+public class BungeecordSkinEventListener implements Listener {
+    private final BungeecordBedrockSkinUtilityListener capeListener;
     private final BedrockSkinRetriever skinRetriever;
     private final SkinDatabase database;
     private final GeyserSkinManager plugin;
     private final SkinUploader skinUploader = new SkinUploader();
 
-    public BungeecordEventListener(GeyserSkinManager plugin) {
+    public BungeecordSkinEventListener(GeyserSkinManager plugin) {
         this.database = new SkinDatabase(plugin.getDataFolder());
         this.plugin = plugin;
         this.skinRetriever = new GeyserSkinRetriever();
+        this.capeListener = new BungeecordBedrockSkinUtilityListener(database, skinRetriever);
+
+        this.plugin.getProxy().registerChannel(Constants.BEDROCK_SKIN_UTILITY_INIT_NAME);
+        this.plugin.getProxy().registerChannel(Constants.CAPE_PLUGIN_MESSAGE_NAME);
+        this.plugin.getProxy().registerChannel(Constants.INIT_PLUGIN_MESSAGE_NAME);
+        this.plugin.getProxy().getPluginManager().registerListener(this.plugin, this.capeListener);
     }
 
     public void shutdown() {
@@ -40,6 +48,14 @@ public class BungeecordEventListener implements Listener {
         if (skin != null) {
             uploadOrRetrieveSkin(event.getPlayer(), event.getServer(), skin);
         }
+        if (skin != null || this.skinRetriever.isBedrockPlayer(event.getPlayer().getUniqueId())) {
+            this.capeListener.onBedrockPlayerJoin(event.getPlayer(), event.getServer().getInfo());
+        }
+    }
+
+    @EventHandler
+    public void onProxyLeave(PlayerDisconnectEvent event) {
+        this.capeListener.onPlayerLeave(event.getPlayer());
     }
 
     protected void uploadOrRetrieveSkin(ProxiedPlayer player, Server server, RawSkin skin) {
@@ -92,7 +108,7 @@ public class BungeecordEventListener implements Listener {
     protected void sendSkin(ProxiedPlayer player, Server server, SkinEntry skinEntry) {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             DataOutputStream out = new DataOutputStream(byteArrayOutputStream);
-            out.writeInt(Constants.PLUGIN_MESSAGE_VERSION); // Ensure that both plugins are up-to-date
+            out.writeInt(Constants.SKIN_PLUGIN_MESSAGE_VERSION); // Ensure that both plugins are up-to-date
             out.writeLong(player.getUniqueId().getMostSignificantBits());
             out.writeLong(player.getUniqueId().getLeastSignificantBits());
             out.writeUTF(skinEntry.getJavaSkinValue());
@@ -105,5 +121,4 @@ public class BungeecordEventListener implements Listener {
             e.printStackTrace();
         }
     }
-
 }

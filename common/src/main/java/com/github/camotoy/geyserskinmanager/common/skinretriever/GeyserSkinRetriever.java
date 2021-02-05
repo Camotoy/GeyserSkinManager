@@ -1,6 +1,7 @@
 package com.github.camotoy.geyserskinmanager.common.skinretriever;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.camotoy.geyserskinmanager.common.RawCape;
 import com.github.camotoy.geyserskinmanager.common.RawSkin;
 import com.google.common.base.Charsets;
 import org.geysermc.connector.GeyserConnector;
@@ -15,6 +16,20 @@ import java.util.UUID;
 
 public class GeyserSkinRetriever implements BedrockSkinRetriever {
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    @Override
+    public RawCape getBedrockCape(UUID uuid) {
+        GeyserSession session = GeyserConnector.getInstance().getPlayerByUuid(uuid);
+        if (session == null) {
+            return null;
+        }
+
+        if (session.getClientData().getCapeImageWidth() == 0 || session.getClientData().getCapeImageHeight() == 0 ||
+                session.getClientData().getCapeData().length == 0) {
+            return null;
+        }
+        return new RawCape(session.getClientData().getCapeImageWidth(), session.getClientData().getCapeImageHeight(), session.getClientData().getCapeData());
+    }
 
     @Override
     public RawSkin getBedrockSkin(String name) {

@@ -1,3 +1,6 @@
 name: GeyserSkinManager-BungeeCord
 version: ${project.version}
+author: Camotoy
 main: com.github.camotoy.geyserskinmanager.bungeecord.GeyserSkinManager
+depends:
+  - Geyser-BungeeCord

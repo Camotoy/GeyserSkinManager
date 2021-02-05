@@ -7,33 +7,37 @@ import com.github.camotoy.geyserskinmanager.spigot.GeyserSkinManager;
 import com.github.camotoy.geyserskinmanager.spigot.profile.MinecraftProfileWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import javax.annotation.Nonnull;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.UUID;
 
-public abstract class EventListener implements Listener, PluginMessageListener {
+public abstract class SpigotPlatformEventListener implements Listener, PluginMessageListener {
+    protected final SpigotBedrockSkinUtilityListener capeListener;
     protected final SkinDatabase database;
     protected final GeyserSkinManager plugin;
     protected final BedrockSkinRetriever skinRetriever;
     protected final SkinUploader skinUploader = new SkinUploader();
     private boolean useNewHidePlayerMethods;
 
-    public EventListener(GeyserSkinManager plugin, boolean bungeeCordMode) {
+    public SpigotPlatformEventListener(GeyserSkinManager plugin, boolean bungeeCordMode) {
         this.plugin = plugin;
 
         if (bungeeCordMode) {
             // BungeeCord takes care of the database, so we don't need to
+            this.capeListener = null;
             this.database = null;
             this.skinRetriever = null;
         } else {
             this.database = new SkinDatabase(plugin.getDataFolder());
             this.skinRetriever = new GeyserSkinRetriever();
+            this.capeListener = new SpigotBedrockSkinUtilityListener(this.plugin, this.database, this.skinRetriever);
+            Bukkit.getMessenger().registerIncomingPluginChannel(this.plugin, Constants.BEDROCK_SKIN_UTILITY_INIT_NAME, this.capeListener);
         }
 
         try {
@@ -42,6 +46,11 @@ public abstract class EventListener implements Listener, PluginMessageListener {
         } catch (NoSuchMethodException e) {
             this.useNewHidePlayerMethods = false;
         }
+    }
+
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent event) {
+        this.capeListener.onPlayerLeave(event.getPlayer());
     }
 
     public void shutdown() {
@@ -86,7 +95,8 @@ public abstract class EventListener implements Listener, PluginMessageListener {
             } else {
                 playerEntryToSave = playerEntry;
             }
-            SkinEntry skinEntry = new SkinEntry(skin.rawData, uploadResult.getResponse().get("value").getAsString(), uploadResult.getResponse().get("signature").getAsString(), false);
+            SkinEntry skinEntry = new SkinEntry(skin.rawData, uploadResult.getResponse().get("value").getAsString(),
+                    uploadResult.getResponse().get("signature").getAsString(), false);
             playerEntryToSave.getSkinEntries().add(skinEntry);
 
             setSkin(profile, player, skinEntry);
@@ -104,7 +114,7 @@ public abstract class EventListener implements Listener, PluginMessageListener {
 
         try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(message))) {
             int version = in.readInt();
-            if (version != Constants.PLUGIN_MESSAGE_VERSION) {
+            if (version != Constants.SKIN_PLUGIN_MESSAGE_VERSION) {
                 plugin.getLogger().warning("Received a plugin message with an invalid version! Make sure that GeyserSkinManager is updated on both BungeeCord and backend servers!");
                 return;
             }
