@@ -82,6 +82,29 @@ public abstract class SpigotPlatformEventListener implements Listener, PluginMes
             }
         }
     }
+    
+//     public RawSkin RetrieveSkin(Player player, RawSkin skin) {
+//         PlayerEntry playerEntry = database.getPlayerEntry(player.getUniqueId());
+        
+//         SkinEntry setSkin = null;
+//         for (SkinEntry skinEntry : playerEntry.getSkinEntries()) {
+//             if (skinEntry.getBedrockSkin().equals(skin.rawData)) {
+//                 setSkin = skinEntry;
+//                 break;
+//             }
+//         }
+//         if (setSkin == null) {
+//             uploadSkin(skin, profile, player, playerEntry);
+//         } else {
+//             // We have the skin, we can go straight to applying it to the player
+//             setSkin(profile, player, setSkin);
+//         }
+        
+//         PlayerEntry playerEntry = database.getPlayerEntry(player.getUniqueId());
+
+//         SkinEntry skinEntry = new SkinEntry(skin.rawData, uploadResult.getResponse().get("value").getAsString(),
+//                     uploadResult.getResponse().get("signature").getAsString(), false);
+//     }
 
     protected void uploadSkin(RawSkin skin, MinecraftProfileWrapper profile, Player player, PlayerEntry playerEntry) {
         skinUploader.uploadSkin(skin).whenComplete((uploadResult, throwable) -> {
