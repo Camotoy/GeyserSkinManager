@@ -1,5 +1,7 @@
 package com.github.camotoy.geyserskinmanager.spigot.listener;
 
+import com.destroystokyo.paper.profile.ProfileProperty;
+import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.camotoy.geyserskinmanager.common.*;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetriever;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.GeyserSkinRetriever;
