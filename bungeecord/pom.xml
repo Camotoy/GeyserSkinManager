@@ -6,7 +6,7 @@
 
     <parent>
         <artifactId>GeyserSkinManager</artifactId>
-        <groupId>com.github.camotoy</groupId>
+        <groupId>com.github.camotoy.geyserskinmanager</groupId>
         <version>1.3-SNAPSHOT</version>
     </parent>
     <artifactId>bungeecord</artifactId>
@@ -80,7 +80,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.camotoy</groupId>
+            <groupId>com.github.camotoy.geyserskinmanager</groupId>
             <artifactId>common</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
