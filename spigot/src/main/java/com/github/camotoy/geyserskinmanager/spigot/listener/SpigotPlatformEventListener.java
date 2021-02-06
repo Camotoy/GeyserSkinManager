@@ -84,6 +84,16 @@ public abstract class SpigotPlatformEventListener implements Listener, PluginMes
     }
     
     public String[] RetrieveSkin(Player player, RawSkin skin) {
+        
+        PlayerProfile playerProfile = player.getPlayerProfile();
+        if (playerProfile.hasTextures()) {
+            Property property = profile.getProperties().get("textures").iterator().next();
+            String texture = property.getValue();
+            String signature = property.getSignature();
+            
+            return {texture, signature};
+        }
+        
         PlayerEntry playerEntry = database.getPlayerEntry(player.getUniqueId());
         
         SkinEntry setSkin = null;
