@@ -89,7 +89,7 @@ public abstract class SpigotPlatformEventListener implements Listener, PluginMes
         }
     }
     
-    public String[] RetrieveSkin(Player player, RawSkin skin) {
+    public String[] RetrieveSkin(Player player) {
 
         PlayerProfile playerProfile = player.getPlayerProfile();
         if (playerProfile.hasTextures()) {
