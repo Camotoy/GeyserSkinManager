@@ -1,17 +1,11 @@
 package com.github.camotoy.geyserskinmanager.spigot.listener;
 
-import com.destroystokyo.paper.profile.ProfileProperty;
-import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.camotoy.geyserskinmanager.common.*;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetriever;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.GeyserSkinRetriever;
 import com.github.camotoy.geyserskinmanager.spigot.GeyserSkinManager;
 import com.github.camotoy.geyserskinmanager.spigot.profile.MinecraftProfileWrapper;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -89,17 +83,7 @@ public abstract class SpigotPlatformEventListener implements Listener, PluginMes
         }
     }
     
-    public String[] RetrieveSkin(Player player) {
-
-        PlayerProfile playerProfile = player.getPlayerProfile();
-        if (playerProfile.hasTextures()) {
-            PropertyMap propertyMap = (PropertyMap) playerProfile.getProperties();
-            Property property = propertyMap.get("textures").iterator().next();
-            String texture = property.getValue();
-            String signature = property.getSignature();
-            
-            return new String[]{texture, signature};
-        }
+    public Object retrieveSkin(Player player) {
         
         PlayerEntry playerEntry = database.getPlayerEntry(player.getUniqueId());
         
@@ -115,16 +99,7 @@ public abstract class SpigotPlatformEventListener implements Listener, PluginMes
             return new String[]{setSkin.getJavaSkinValue(), setSkin.getJavaSkinSignature()};
         }
         
-        /*
-            Default Steve Skin, Value and Signature
-            This is Provided if setSkin is Null
-            (Just to bypass any errors)
-        */
-        
-        String value = "ewogICJ0aW1lc3RhbXAiIDogMTYxMjY0NzA0MzEwOCwKICAicHJvZmlsZUlkIiA6ICJmYmYyMmIyMjNjN2E0NzA0OGYwM2U0MzVhZGFhNGVhZiIsCiAgInByb2ZpbGVOYW1lIiA6ICJCZWFyZGVkU3RldmUiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWE0YWY3MTg0NTVkNGFhYjUyOGU3YTYxZjg2ZmEyNWU2YTM2OWQxNzY4ZGNiMTNmN2RmMzE5YTcxM2ViODEwYiIKICAgIH0KICB9Cn0=";
-        String signature = "Et91ODhR0JTM3jQvI3x9b0d1mdAw1O9iE8vx5M0UfaV+qiCpH0S2OjkyIAN+vRi7FK6DjIvAEng3Z6MZYa+BexicYRUJBstpPHI36jcoJMbZ/EHZcUok4bb4LRQLrYRTlMPGUZU7CwVXMCu33p60TR6tx9mSFIQFJiAbnK0Fj5+9y2toLXKn/pkntnJHR/fS6oImILHx/pTnPPLjG9ixSot4C9kmdcdTS5FKfui4kU8p0SWjwC3glqvGOslZngbReke8sduNvVUFiqRKELZnYCloAs0q6l+TQigcxwlidtV5fmbRg/kHTuHjCahaY2REYKJu0E7IWyLQh063KvhqplZLiAkhj1KsldAFDhwIAqR9M0eO9DDnUVFWv+gSlNLu23eHzKwwb2g/c3HchVyfo15qpVAgL+qzhzcrUumWCLR42ywMvzddH7L3o/cnJI5leQ6lQUb2CeVhPTTarnIXwti/Q1NO16gr/GN2an2Tpin/Ucc/zJsLVZwG0KnhWnmWUEs3sURcpEv3x02A95hMcTQbDIiZ71XvVW77i7nD9P9/DSY2WSfc2JpjGX0RKMKOBDr6tzz4ShAsJrWz+N2x3QEV7w9r/2paPgR9nnKBQeTYFkM8H43WhJjOmz9B4HR0zKn+gD/azUWmynEt+zEMZ1Lnlv3x/YHzfrkmPDmfQJY=";
-        
-        return new String[]{value, signature};
+        return null;
     }
     
     protected void uploadSkin(RawSkin skin, MinecraftProfileWrapper profile, Player player, PlayerEntry playerEntry) {
