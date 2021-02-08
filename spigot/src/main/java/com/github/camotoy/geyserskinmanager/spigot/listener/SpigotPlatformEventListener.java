@@ -37,7 +37,7 @@ public abstract class SpigotPlatformEventListener implements Listener, PluginMes
             this.database = new SkinDatabase(plugin.getDataFolder());
             this.skinRetriever = new GeyserSkinRetriever();
             this.capeListener = new SpigotBedrockSkinUtilityListener(this.plugin, this.database, this.skinRetriever);
-            Bukkit.getMessenger().registerIncomingPluginChannel(this.plugin, Constants.BEDROCK_SKIN_UTILITY_INIT_NAME, this.capeListener);
+            Bukkit.getPluginManager().registerEvents(this.capeListener, this.plugin);
         }
 
         try {

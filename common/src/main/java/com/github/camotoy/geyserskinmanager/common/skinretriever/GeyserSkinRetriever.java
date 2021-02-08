@@ -28,7 +28,8 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
                 session.getClientData().getCapeData().length == 0) {
             return null;
         }
-        return new RawCape(session.getClientData().getCapeImageWidth(), session.getClientData().getCapeImageHeight(), session.getClientData().getCapeData());
+        return new RawCape(session.getClientData().getCapeImageWidth(), session.getClientData().getCapeImageHeight(),
+                session.getClientData().getCapeId(), session.getClientData().getCapeData());
     }
 
     @Override

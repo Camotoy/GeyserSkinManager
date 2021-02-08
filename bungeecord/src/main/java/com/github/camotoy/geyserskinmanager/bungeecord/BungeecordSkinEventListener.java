@@ -27,9 +27,7 @@ public class BungeecordSkinEventListener implements Listener {
         this.skinRetriever = new GeyserSkinRetriever();
         this.capeListener = new BungeecordBedrockSkinUtilityListener(database, skinRetriever);
 
-        this.plugin.getProxy().registerChannel(Constants.BEDROCK_SKIN_UTILITY_INIT_NAME);
-        this.plugin.getProxy().registerChannel(Constants.CAPE_PLUGIN_MESSAGE_NAME);
-        this.plugin.getProxy().registerChannel(Constants.INIT_PLUGIN_MESSAGE_NAME);
+        this.plugin.getProxy().registerChannel(Constants.MOD_PLUGIN_MESSAGE_NAME);
         this.plugin.getProxy().getPluginManager().registerListener(this.plugin, this.capeListener);
     }
 

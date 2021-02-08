@@ -1,5 +1,6 @@
 package com.github.camotoy.geyserskinmanager.common.platform;
 
+import com.github.camotoy.geyserskinmanager.common.BedrockSkinPluginMessageType;
 import com.github.camotoy.geyserskinmanager.common.Constants;
 import com.github.camotoy.geyserskinmanager.common.RawCape;
 import com.github.camotoy.geyserskinmanager.common.SkinDatabase;
@@ -8,6 +9,7 @@ import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetr
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +32,17 @@ public abstract class BedrockSkinUtilityListener<T> implements PlatformPlayerUui
 
     public abstract void sendCape(byte[] payload, T player);
 
+    /**
+     * @param player the player that we know has the mod installed.
+     */
+    public void onModdedPlayerConfirm(T player) {
+        UUID uuid = getUUID(player);
+        if (!moddedPlayers.containsKey(uuid)) {
+            moddedPlayers.put(uuid, player);
+            sendAllCapes(player);
+        }
+    }
+
     public void onBedrockPlayerJoin(T player) {
         byte[] payload = getCape(getUUID(player));
         if (payload != null) {
@@ -49,20 +62,28 @@ public abstract class BedrockSkinUtilityListener<T> implements PlatformPlayerUui
         RawCape cape = this.skinRetriever.getBedrockCape(uuid);
         byte[] capeData;
         if (cape != null) {
-            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-                DataOutputStream out = new DataOutputStream(byteArrayOutputStream);
-                out.writeInt(Constants.CAPE_PLUGIN_MESSAGE_VERSION);
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(); DataOutputStream out = new DataOutputStream(byteArrayOutputStream)) {
+                out.writeInt(BedrockSkinPluginMessageType.SEND_CAPE.ordinal());
+                out.writeInt(Constants.CAPE_PLUGIN_MESSAGE_TYPE_VERSION);
+
                 out.writeLong(uuid.getMostSignificantBits());
                 out.writeLong(uuid.getLeastSignificantBits());
+
                 out.writeInt(cape.width);
                 out.writeInt(cape.height);
+
+                byte[] capeIdBytes = cape.id.getBytes(StandardCharsets.UTF_8);
+                out.writeInt(capeIdBytes.length);
+                for (byte data : capeIdBytes) {
+                    out.writeByte(data);
+                }
+
                 out.writeInt(cape.data.length);
                 for (byte data : cape.data) {
                     out.writeByte(data);
                 }
 
                 capeData = byteArrayOutputStream.toByteArray();
-                out.close();
             } catch (IOException e) {
                 throw new RuntimeException("Could not write cape data!", e);
             }

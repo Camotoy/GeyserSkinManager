@@ -25,8 +25,6 @@ public class PaperEventListener extends SpigotPlatformEventListener {
                 uploadOrRetrieveSkin(profile, event.getPlayer(), skin);
             }
         }
-        capeListener.addPluginMessageChannel(event.getPlayer(), Constants.INIT_PLUGIN_MESSAGE_NAME);
-        event.getPlayer().sendPluginMessage(plugin, Constants.INIT_PLUGIN_MESSAGE_NAME, new byte[0]);
 
         if (skin != null || skinRetriever.isBedrockPlayer(event.getPlayer().getUniqueId())) {
             // Send cape even if the player has a skin or the skin cannot be sent
