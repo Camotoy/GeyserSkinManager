@@ -43,7 +43,12 @@ public class BungeecordPluginMessageListener implements PluginMessageListener {
                 plugin.getLogger().warning("Received a plugin message with an invalid version! Make sure that GeyserSkinManager is updated on both BungeeCord and backend servers!");
                 return;
             }
-            Player bedrockPlayer = Bukkit.getPlayer(new UUID(in.readLong(), in.readLong()));
+            UUID uuid = new UUID(in.readLong(), in.readLong());
+            Player bedrockPlayer = Bukkit.getPlayer(uuid);
+            if (bedrockPlayer == null) {
+                this.plugin.getLogger().warning("Player with UUID " + uuid + " could not be found!");
+                return;
+            }
             String value = in.readUTF();
             String signature = in.readUTF();
             SkinEntry skinEntry = new SkinEntry(value, signature);

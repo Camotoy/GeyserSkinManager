@@ -12,5 +12,6 @@
         <module>bungeecord</module>
         <module>common</module>
         <module>spigot</module>
+        <module>velocity</module>
     </modules>
 </project>

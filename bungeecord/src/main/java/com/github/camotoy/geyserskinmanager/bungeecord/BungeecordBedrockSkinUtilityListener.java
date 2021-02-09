@@ -8,6 +8,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
+import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
@@ -19,6 +20,18 @@ public class BungeecordBedrockSkinUtilityListener extends BedrockSkinUtilityList
 
     public BungeecordBedrockSkinUtilityListener(SkinDatabase database, BedrockSkinRetriever skinRetriever) {
         super(database, skinRetriever);
+    }
+
+    @EventHandler
+    public void onServerSwitch(ServerSwitchEvent event) {
+        if (this.moddedPlayers.containsKey(event.getPlayer().getUniqueId())) {
+            sendAllCapes(event.getPlayer());
+        }
+
+        byte[] capeData = this.database.getCape(event.getPlayer().getUniqueId());
+        if (capeData != null) {
+            onBedrockServerJoinOrSwitch(event.getPlayer().getServer().getInfo(), capeData);
+        }
     }
 
     @EventHandler
@@ -37,10 +50,14 @@ public class BungeecordBedrockSkinUtilityListener extends BedrockSkinUtilityList
     public void onBedrockPlayerJoin(ProxiedPlayer player, ServerInfo serverInfo) {
         byte[] payload = getCape(getUUID(player));
         if (payload != null) {
-            for (ProxiedPlayer moddedPlayer : moddedPlayers.values()) {
-                if (moddedPlayer.getServer().getInfo().getName().equals(serverInfo.getName())) {
-                    sendCape(payload, moddedPlayer);
-                }
+            onBedrockServerJoinOrSwitch(serverInfo, payload);
+        }
+    }
+
+    public void onBedrockServerJoinOrSwitch(ServerInfo serverInfo, byte[] payload) {
+        for (ProxiedPlayer moddedPlayer : moddedPlayers.values()) {
+            if (moddedPlayer.getServer().getInfo().getName().equals(serverInfo.getName())) {
+                sendCape(payload, moddedPlayer);
             }
         }
     }
