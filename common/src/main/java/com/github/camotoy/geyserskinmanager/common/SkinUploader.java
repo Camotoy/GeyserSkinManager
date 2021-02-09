@@ -32,7 +32,7 @@ import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
+import java.util.function.Consumer;
 
 public final class SkinUploader {
     private static final String UPLOAD_URL = "https://api.mineskin.org/generate/upload";
@@ -94,16 +94,15 @@ public final class SkinUploader {
         }
     }
 
-    public boolean checkResult(Logger logger, String playerName, UploadResult uploadResult, Throwable throwable) {
+    public boolean checkResult(Consumer<String> warningLoggingFunction, String playerName, UploadResult uploadResult, Throwable throwable) {
         if (throwable != null) {
-            logger.warning(
-                    "Failed to upload player skin for " + playerName);
+            warningLoggingFunction.accept("Failed to upload player skin for " + playerName);
             throwable.printStackTrace();
             return false;
         }
 
         if (uploadResult.getError() != null) {
-            logger.warning("Error while uploading player skin for " + playerName + " " + uploadResult.getError());
+            warningLoggingFunction.accept("Error while uploading player skin for " + playerName + " " + uploadResult.getError());
             return false;
         }
         return true;

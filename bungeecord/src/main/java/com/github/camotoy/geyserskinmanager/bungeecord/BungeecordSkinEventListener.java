@@ -1,8 +1,10 @@
 package com.github.camotoy.geyserskinmanager.bungeecord;
 
-import com.github.camotoy.geyserskinmanager.common.*;
-import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetriever;
-import com.github.camotoy.geyserskinmanager.common.skinretriever.GeyserSkinRetriever;
+import com.github.camotoy.geyserskinmanager.common.Constants;
+import com.github.camotoy.geyserskinmanager.common.RawSkin;
+import com.github.camotoy.geyserskinmanager.common.SkinEntry;
+import com.github.camotoy.geyserskinmanager.common.platform.ProxyPluginMessageSend;
+import com.github.camotoy.geyserskinmanager.common.platform.SkinEventListener;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -10,25 +12,17 @@ import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.util.UUID;
 
-public class BungeecordSkinEventListener implements Listener {
+public class BungeecordSkinEventListener extends SkinEventListener<ProxiedPlayer, Server> implements Listener, ProxyPluginMessageSend<Server> {
     private final BungeecordBedrockSkinUtilityListener capeListener;
-    private final BedrockSkinRetriever skinRetriever;
-    private final SkinDatabase database;
-    private final GeyserSkinManager plugin;
-    private final SkinUploader skinUploader = new SkinUploader();
 
     public BungeecordSkinEventListener(GeyserSkinManager plugin) {
-        this.database = new SkinDatabase(plugin.getDataFolder());
-        this.plugin = plugin;
-        this.skinRetriever = new GeyserSkinRetriever();
+        super(plugin.getDataFolder(), plugin.getLogger()::warning);
         this.capeListener = new BungeecordBedrockSkinUtilityListener(database, skinRetriever);
 
-        this.plugin.getProxy().registerChannel(Constants.MOD_PLUGIN_MESSAGE_NAME);
-        this.plugin.getProxy().getPluginManager().registerListener(this.plugin, this.capeListener);
+        plugin.getProxy().registerChannel(Constants.MOD_PLUGIN_MESSAGE_NAME);
+        plugin.getProxy().getPluginManager().registerListener(plugin, this.capeListener);
     }
 
     public void shutdown() {
@@ -56,67 +50,19 @@ public class BungeecordSkinEventListener implements Listener {
         this.capeListener.onPlayerLeave(event.getPlayer());
     }
 
-    protected void uploadOrRetrieveSkin(ProxiedPlayer player, Server server, RawSkin skin) {
-        PlayerEntry playerEntry = database.getPlayerEntry(player.getUniqueId());
-
-        if (playerEntry == null) {
-            // Fresh join
-            uploadSkin(skin, player, server,null);
-        } else {
-            // This player has joined before
-            SkinEntry setSkin = null;
-            for (SkinEntry skinEntry : playerEntry.getSkinEntries()) {
-                if (skinEntry.getBedrockSkin().equals(skin.rawData)) {
-                    setSkin = skinEntry;
-                    break;
-                }
-            }
-            if (setSkin == null) {
-                uploadSkin(skin, player, server, playerEntry);
-            } else {
-                // We have the skin, we can go straight to applying it to the player
-                sendSkin(player, server, setSkin);
-            }
-        }
+    @Override
+    public void onSuccess(ProxiedPlayer player, Server server, SkinEntry skinEntry) {
+        UUID uuid = getUUID(player);
+        sendSkinToBackendServer(uuid, server, skinEntry);
     }
 
-    protected void uploadSkin(RawSkin skin, ProxiedPlayer player, Server server, PlayerEntry playerEntry) {
-        skinUploader.uploadSkin(skin).whenComplete((uploadResult, throwable) -> {
-            if (!skinUploader.checkResult(plugin.getLogger(), player.getName(), uploadResult, throwable)) {
-                return;
-            }
-
-            PlayerEntry playerEntryToSave;
-            if (playerEntry == null) {
-                playerEntryToSave = new PlayerEntry(player.getUniqueId());
-            } else {
-                playerEntryToSave = playerEntry;
-            }
-            SkinEntry skinEntry = new SkinEntry(skin.rawData, uploadResult.getResponse().get("value").getAsString(),
-                    uploadResult.getResponse().get("signature").getAsString(), false);
-            playerEntryToSave.getSkinEntries().add(skinEntry);
-
-            sendSkin(player, server, skinEntry);
-
-            // Save the information so we don't have to upload skins to Mineskin again
-            database.savePlayerInformation(playerEntryToSave);
-        });
+    @Override
+    public UUID getUUID(ProxiedPlayer player) {
+        return player.getUniqueId();
     }
 
-    protected void sendSkin(ProxiedPlayer player, Server server, SkinEntry skinEntry) {
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            DataOutputStream out = new DataOutputStream(byteArrayOutputStream);
-            out.writeInt(Constants.SKIN_PLUGIN_MESSAGE_VERSION); // Ensure that both plugins are up-to-date
-            out.writeLong(player.getUniqueId().getMostSignificantBits());
-            out.writeLong(player.getUniqueId().getLeastSignificantBits());
-            out.writeUTF(skinEntry.getJavaSkinValue());
-            out.writeUTF(skinEntry.getJavaSkinSignature());
-
-            server.sendData(Constants.SKIN_PLUGIN_MESSAGE_NAME, byteArrayOutputStream.toByteArray());
-
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void sendPluginMessage(Server server, byte[] payload) {
+        server.sendData(Constants.SKIN_PLUGIN_MESSAGE_NAME, payload);
     }
 }

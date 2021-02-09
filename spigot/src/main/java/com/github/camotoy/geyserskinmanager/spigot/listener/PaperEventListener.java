@@ -1,11 +1,10 @@
 package com.github.camotoy.geyserskinmanager.spigot.listener;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import com.github.camotoy.geyserskinmanager.common.*;
+import com.github.camotoy.geyserskinmanager.common.RawSkin;
 import com.github.camotoy.geyserskinmanager.spigot.GeyserSkinManager;
 import com.github.camotoy.geyserskinmanager.spigot.profile.MinecraftProfileWrapper;
 import com.github.camotoy.geyserskinmanager.spigot.profile.PaperProfileWrapper;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -14,6 +13,7 @@ public class PaperEventListener extends SpigotPlatformEventListener {
         super(plugin, bungeeCordMode);
     }
 
+    @Override
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         RawSkin skin = null;
@@ -22,7 +22,7 @@ public class PaperEventListener extends SpigotPlatformEventListener {
             skin = skinRetriever.getBedrockSkin(event.getPlayer().getUniqueId());
             if (skin != null) {
                 MinecraftProfileWrapper profile = new PaperProfileWrapper(playerProfile);
-                uploadOrRetrieveSkin(profile, event.getPlayer(), skin);
+                uploadOrRetrieveSkin(event.getPlayer(), profile, skin);
             }
         }
 
@@ -30,10 +30,5 @@ public class PaperEventListener extends SpigotPlatformEventListener {
             // Send cape even if the player has a skin or the skin cannot be sent
             capeListener.onBedrockPlayerJoin(event.getPlayer());
         }
-    }
-
-    @Override
-    public MinecraftProfileWrapper getMinecraftProfileWrapper(Player player) {
-        return new PaperProfileWrapper(player.getPlayerProfile());
     }
 }

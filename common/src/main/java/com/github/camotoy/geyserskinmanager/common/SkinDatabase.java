@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -117,6 +118,11 @@ public class SkinDatabase {
 
     public Set<Map.Entry<UUID, byte[]>> getCapes() {
         return capeEntries.entrySet();
+    }
+
+    @Nullable
+    public byte[] getCape(UUID uuid) {
+        return capeEntries.get(uuid);
     }
 
     public void removeCape(UUID uuid) {

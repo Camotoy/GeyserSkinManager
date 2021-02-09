@@ -21,4 +21,8 @@ public class PaperProfileWrapper implements MinecraftProfileWrapper {
         // The profile we get is a clone and not the original
         player.setPlayerProfile(this.profile);
     }
+
+    public static MinecraftProfileWrapper from(Player player) {
+        return new PaperProfileWrapper(player.getPlayerProfile());
+    }
 }
