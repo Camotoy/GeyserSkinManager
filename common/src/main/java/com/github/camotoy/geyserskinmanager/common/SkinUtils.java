@@ -155,7 +155,7 @@ public class SkinUtils {
 
             // Loop through each bone mapping it to the new texture
             for (Bone bone : bones) {
-                if (bone.getCubes() == null) {
+                if (bone.getCubes() == null || bone.getCubes().isEmpty()) {
                     continue;
                 }
                 // Check if we should map this bone to the new texture
