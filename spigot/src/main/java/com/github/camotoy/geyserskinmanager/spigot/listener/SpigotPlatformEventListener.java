@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.util.UUID;
 
 public abstract class SpigotPlatformEventListener extends SkinEventListener<Player, MinecraftProfileWrapper> implements Listener {
-    protected final SpigotBedrockSkinUtilityListener capeListener;
+    protected final SpigotBedrockSkinUtilityListener modListener;
     protected final GeyserSkinManager plugin;
     protected final SpigotSkinApplier skinApplier;
 
@@ -25,10 +25,10 @@ public abstract class SpigotPlatformEventListener extends SkinEventListener<Play
 
         if (bungeeCordMode) {
             // BungeeCord takes care of the database, so we don't need to
-            this.capeListener = null;
+            this.modListener = null;
         } else {
-            this.capeListener = new SpigotBedrockSkinUtilityListener(this.plugin, this.database, this.skinRetriever);
-            Bukkit.getPluginManager().registerEvents(this.capeListener, this.plugin);
+            this.modListener = new SpigotBedrockSkinUtilityListener(this.plugin, this.database, this.skinRetriever);
+            Bukkit.getPluginManager().registerEvents(this.modListener, this.plugin);
         }
 
         this.skinApplier = new SpigotSkinApplier(plugin);
@@ -39,7 +39,7 @@ public abstract class SpigotPlatformEventListener extends SkinEventListener<Play
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
-        this.capeListener.onPlayerLeave(event.getPlayer());
+        this.modListener.onPlayerLeave(event.getPlayer());
     }
 
     public void shutdown() {

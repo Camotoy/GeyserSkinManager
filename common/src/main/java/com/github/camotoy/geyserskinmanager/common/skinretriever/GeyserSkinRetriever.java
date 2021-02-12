@@ -6,10 +6,7 @@ import com.github.camotoy.geyserskinmanager.common.RawSkin;
 import org.geysermc.connector.GeyserConnector;
 import org.geysermc.connector.network.session.GeyserSession;
 import org.geysermc.connector.network.session.auth.BedrockClientData;
-import org.geysermc.connector.skin.SkinProvider;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.UUID;
@@ -45,7 +42,7 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
             return null;
         }
 
-        return getAndTransformImage(session.getClientData());
+        return getImage(session.getClientData());
     }
 
     @Override
@@ -55,7 +52,7 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
             return null;
         }
 
-        return getAndTransformImage(session.getClientData());
+        return getImage(session.getClientData());
     }
 
     @Override
@@ -83,28 +80,6 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
         );
     }
 
-    private RawSkin getAndTransformImage(BedrockClientData clientData) {
-        RawSkin skin = getImage(clientData);
-        if (skin == null) {
-            return null;
-        }
-        if (skin.width > 64 || skin.height > 64) {
-            BufferedImage scaledImage = SkinProvider.imageDataToBufferedImage(skin.data, skin.width, skin.height);
-
-            int max = Math.max(skin.width, skin.height);
-            while (max > 64) {
-                max /= 2;
-                scaledImage = scale(scaledImage);
-            }
-
-            byte[] skinData = SkinProvider.bufferedImageToImageData(scaledImage);
-            skin.width = scaledImage.getWidth();
-            skin.height = scaledImage.getHeight();
-            skin.data = skinData;
-        }
-        return skin;
-    }
-
     private boolean isAlex(String geometryName) {
         try {
             String defaultGeometryName = OBJECT_MAPPER.readTree(geometryName).get("geometry").get("default").asText();
@@ -113,14 +88,5 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
             exception.printStackTrace();
             return false;
         }
-    }
-
-    private BufferedImage scale(BufferedImage bufferedImage) {
-        BufferedImage resized = new BufferedImage(bufferedImage.getWidth() / 2, bufferedImage.getHeight() / 2, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = resized.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2.drawImage(bufferedImage, 0, 0, bufferedImage.getWidth() / 2, bufferedImage.getHeight() / 2, null);
-        g2.dispose();
-        return resized;
     }
 }

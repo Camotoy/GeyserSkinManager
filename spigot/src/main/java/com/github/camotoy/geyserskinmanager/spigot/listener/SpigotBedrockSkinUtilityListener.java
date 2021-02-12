@@ -28,8 +28,13 @@ public class SpigotBedrockSkinUtilityListener extends BedrockSkinUtilityListener
     }
 
     @Override
-    public void sendCape(byte[] payload, Player player) {
+    public void sendPluginMessage(byte[] payload, Player player) {
         player.sendPluginMessage(plugin, Constants.MOD_PLUGIN_MESSAGE_NAME, payload);
+    }
+
+    @Override
+    public int getPluginMessageDataLimit() {
+        return 32766;
     }
 
     @Override

@@ -15,14 +15,14 @@ import net.md_5.bungee.event.EventHandler;
 import java.util.UUID;
 
 public class BungeecordSkinEventListener extends SkinEventListener<ProxiedPlayer, Server> implements Listener, ProxyPluginMessageSend<Server> {
-    private final BungeecordBedrockSkinUtilityListener capeListener;
+    private final BungeecordBedrockSkinUtilityListener modListener;
 
     public BungeecordSkinEventListener(GeyserSkinManager plugin) {
         super(plugin.getDataFolder(), plugin.getLogger()::warning);
-        this.capeListener = new BungeecordBedrockSkinUtilityListener(database, skinRetriever);
+        this.modListener = new BungeecordBedrockSkinUtilityListener(database, skinRetriever);
 
         plugin.getProxy().registerChannel(Constants.MOD_PLUGIN_MESSAGE_NAME);
-        plugin.getProxy().getPluginManager().registerListener(plugin, this.capeListener);
+        plugin.getProxy().getPluginManager().registerListener(plugin, this.modListener);
     }
 
     public void shutdown() {
@@ -41,13 +41,13 @@ public class BungeecordSkinEventListener extends SkinEventListener<ProxiedPlayer
             uploadOrRetrieveSkin(event.getPlayer(), event.getServer(), skin);
         }
         if (skin != null || this.skinRetriever.isBedrockPlayer(event.getPlayer().getUniqueId())) {
-            this.capeListener.onBedrockPlayerJoin(event.getPlayer(), event.getServer().getInfo());
+            this.modListener.onBedrockPlayerJoin(event.getPlayer(), skin, event.getServer().getInfo());
         }
     }
 
     @EventHandler
     public void onProxyLeave(PlayerDisconnectEvent event) {
-        this.capeListener.onPlayerLeave(event.getPlayer());
+        this.modListener.onPlayerLeave(event.getPlayer());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.github.camotoy.geyserskinmanager.velocity;
 
+import com.github.camotoy.geyserskinmanager.common.BedrockPluginMessageData;
+import com.github.camotoy.geyserskinmanager.common.RawSkin;
 import com.github.camotoy.geyserskinmanager.common.SkinDatabase;
 import com.github.camotoy.geyserskinmanager.common.platform.BedrockSkinUtilityListener;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetriever;
@@ -30,18 +32,18 @@ public class VelocityBedrockSkinUtilityListener extends BedrockSkinUtilityListen
     }
 
     @Override
-    public void onBedrockPlayerJoin(Player player) {
-        byte[] payload = getCape(player.getUniqueId());
-        if (payload != null) {
-            onBedrockServerJoinOrSwitch(player, payload);
+    public void onBedrockPlayerJoin(Player player, RawSkin skin) {
+        BedrockPluginMessageData data = getSkinAndCape(player.getUniqueId(), skin);
+        if (data != null) {
+            onBedrockServerJoinOrSwitch(player, data);
         }
     }
 
-    public void onBedrockServerJoinOrSwitch(Player bedrockPlayer, byte[] payload) {
+    public void onBedrockServerJoinOrSwitch(Player bedrockPlayer, BedrockPluginMessageData data) {
         bedrockPlayer.getCurrentServer().ifPresent(connection -> {
             for (Player moddedPlayer : moddedPlayers.values()) {
                 if (connection.getServer().getPlayersConnected().contains(moddedPlayer)) {
-                    sendCape(payload, moddedPlayer);
+                    sendPluginMessageData(moddedPlayer, data);
                 }
             }
         });
@@ -55,9 +57,9 @@ public class VelocityBedrockSkinUtilityListener extends BedrockSkinUtilityListen
                 sendAllCapes(event.getPlayer());
             }
 
-            byte[] capeData = this.database.getCape(event.getPlayer().getUniqueId());
-            if (capeData != null) {
-                onBedrockServerJoinOrSwitch(event.getPlayer(), capeData);
+            BedrockPluginMessageData data = this.database.getPluginMessageData(event.getPlayer().getUniqueId());
+            if (data != null) {
+                onBedrockServerJoinOrSwitch(event.getPlayer(), data);
             }
         }
     }
@@ -70,10 +72,10 @@ public class VelocityBedrockSkinUtilityListener extends BedrockSkinUtilityListen
             return;
         }
 
-        for (Map.Entry<UUID, byte[]> cape : database.getCapes()) {
-            server.getPlayer(cape.getKey()).ifPresent(otherPlayer -> {
+        for (Map.Entry<UUID, BedrockPluginMessageData> data : database.getPluginMessageData()) {
+            server.getPlayer(data.getKey()).ifPresent(otherPlayer -> {
                 if (connection.getServer().getPlayersConnected().contains(otherPlayer)) {
-                    sendCape(cape.getValue(), player);
+                    sendPluginMessageData(player, data.getValue());
                 }
             });
         }
@@ -85,7 +87,7 @@ public class VelocityBedrockSkinUtilityListener extends BedrockSkinUtilityListen
     }
 
     @Override
-    public void sendCape(byte[] payload, Player player) {
+    public void sendPluginMessage(byte[] payload, Player player) {
         player.sendPluginMessage(VelocityConstants.MOD_PLUGIN_MESSAGE_NAME, payload);
     }
 

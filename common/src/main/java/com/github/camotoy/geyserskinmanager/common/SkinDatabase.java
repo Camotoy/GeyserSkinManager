@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class SkinDatabase {
     private static final DefaultPrettyPrinter PRETTY_PRINTER = new DefaultPrettyPrinter();
 
-    private final Map<UUID, byte[]> capeEntries = new ConcurrentHashMap<>();
+    private final Map<UUID, BedrockPluginMessageData> pluginMessageEntries = new ConcurrentHashMap<>();
     private final Cache<UUID, PlayerEntry> playerEntries = CacheBuilder.newBuilder()
             .expireAfterAccess(1, TimeUnit.DAYS)
             .build();
@@ -112,25 +112,25 @@ public class SkinDatabase {
         return null;
     }
 
-    public void addCape(UUID uuid, byte[] payload) {
-        capeEntries.put(uuid, payload);
+    public void addPluginMessageData(UUID uuid, BedrockPluginMessageData data) {
+        pluginMessageEntries.put(uuid, data);
     }
 
-    public Set<Map.Entry<UUID, byte[]>> getCapes() {
-        return capeEntries.entrySet();
+    public Set<Map.Entry<UUID, BedrockPluginMessageData>> getPluginMessageData() {
+        return pluginMessageEntries.entrySet();
     }
 
     @Nullable
-    public byte[] getCape(UUID uuid) {
-        return capeEntries.get(uuid);
+    public BedrockPluginMessageData getPluginMessageData(UUID uuid) {
+        return pluginMessageEntries.get(uuid);
     }
 
-    public void removeCape(UUID uuid) {
-        capeEntries.remove(uuid);
+    public void removePluginMessageData(UUID uuid) {
+        pluginMessageEntries.remove(uuid);
     }
 
     public void clear() {
-        capeEntries.clear();
+        pluginMessageEntries.clear();
         playerEntries.invalidateAll();
     }
 

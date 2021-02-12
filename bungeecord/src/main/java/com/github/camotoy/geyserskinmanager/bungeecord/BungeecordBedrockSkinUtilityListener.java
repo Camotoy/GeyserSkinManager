@@ -1,6 +1,8 @@
 package com.github.camotoy.geyserskinmanager.bungeecord;
 
+import com.github.camotoy.geyserskinmanager.common.BedrockPluginMessageData;
 import com.github.camotoy.geyserskinmanager.common.Constants;
+import com.github.camotoy.geyserskinmanager.common.RawSkin;
 import com.github.camotoy.geyserskinmanager.common.SkinDatabase;
 import com.github.camotoy.geyserskinmanager.common.platform.BedrockSkinUtilityListener;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetriever;
@@ -28,9 +30,9 @@ public class BungeecordBedrockSkinUtilityListener extends BedrockSkinUtilityList
             sendAllCapes(event.getPlayer());
         }
 
-        byte[] capeData = this.database.getCape(event.getPlayer().getUniqueId());
-        if (capeData != null) {
-            onBedrockServerJoinOrSwitch(event.getPlayer().getServer().getInfo(), capeData);
+        BedrockPluginMessageData data = this.database.getPluginMessageData(event.getPlayer().getUniqueId());
+        if (data != null) {
+            onBedrockServerJoinOrSwitch(event.getPlayer().getServer().getInfo(), data);
         }
     }
 
@@ -47,32 +49,32 @@ public class BungeecordBedrockSkinUtilityListener extends BedrockSkinUtilityList
         }
     }
 
-    public void onBedrockPlayerJoin(ProxiedPlayer player, ServerInfo serverInfo) {
-        byte[] payload = getCape(getUUID(player));
+    public void onBedrockPlayerJoin(ProxiedPlayer player, RawSkin skin, ServerInfo serverInfo) {
+        BedrockPluginMessageData payload = getSkinAndCape(getUUID(player), skin);
         if (payload != null) {
             onBedrockServerJoinOrSwitch(serverInfo, payload);
         }
     }
 
-    public void onBedrockServerJoinOrSwitch(ServerInfo serverInfo, byte[] payload) {
+    public void onBedrockServerJoinOrSwitch(ServerInfo serverInfo, BedrockPluginMessageData data) {
         for (ProxiedPlayer moddedPlayer : moddedPlayers.values()) {
             if (moddedPlayer.getServer().getInfo().getName().equals(serverInfo.getName())) {
-                sendCape(payload, moddedPlayer);
+                sendPluginMessageData(moddedPlayer, data);
             }
         }
     }
 
     @Override
     public void sendAllCapes(ProxiedPlayer player) {
-        for (Map.Entry<UUID, byte[]> cape : database.getCapes()) {
-            if (player.getServer().getInfo().getPlayers().contains(ProxyServer.getInstance().getPlayer(cape.getKey()))) {
-                sendCape(cape.getValue(), player);
+        for (Map.Entry<UUID, BedrockPluginMessageData> data : database.getPluginMessageData()) {
+            if (player.getServer().getInfo().getPlayers().contains(ProxyServer.getInstance().getPlayer(data.getKey()))) {
+                sendPluginMessageData(player, data.getValue());
             }
         }
     }
 
     @Override
-    public void sendCape(byte[] payload, ProxiedPlayer player) {
+    public void sendPluginMessage(byte[] payload, ProxiedPlayer player) {
         player.sendData(Constants.MOD_PLUGIN_MESSAGE_NAME, payload);
     }
 

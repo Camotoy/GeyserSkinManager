@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class VelocitySkinEventListener extends SkinEventListener<Player, ServerConnection> implements ProxyPluginMessageSend<ServerConnection> {
-    private final VelocityBedrockSkinUtilityListener capeListener;
+    private final VelocityBedrockSkinUtilityListener modListener;
 
     public VelocitySkinEventListener(ProxyServer server, GeyserSkinManager plugin, File skinDatabaseLocation, Logger logger) {
         super(skinDatabaseLocation, logger::warn);
@@ -32,11 +32,11 @@ public class VelocitySkinEventListener extends SkinEventListener<Player, ServerC
         }
 
         if (useCapeListener) {
-            this.capeListener = new VelocityBedrockSkinUtilityListener(server, this.database, this.skinRetriever);
-            server.getEventManager().register(plugin, this.capeListener);
+            this.modListener = new VelocityBedrockSkinUtilityListener(server, this.database, this.skinRetriever);
+            server.getEventManager().register(plugin, this.modListener);
             server.getChannelRegistrar().register(VelocityConstants.MOD_PLUGIN_MESSAGE_NAME);
         } else {
-            this.capeListener = null;
+            this.modListener = null;
         }
     }
 
@@ -61,9 +61,9 @@ public class VelocitySkinEventListener extends SkinEventListener<Player, ServerC
                 }
             }
 
-            if (this.capeListener != null) {
+            if (this.modListener != null) {
                 if (skin != null || skinRetriever.isBedrockPlayer(event.getPlayer().getUniqueId())) {
-                    this.capeListener.onBedrockPlayerJoin(event.getPlayer());
+                    this.modListener.onBedrockPlayerJoin(event.getPlayer(), skin);
                 }
             }
         }

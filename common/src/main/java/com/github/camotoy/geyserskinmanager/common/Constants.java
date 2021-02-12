@@ -10,6 +10,8 @@ public final class Constants {
      * Used for future-proofing, in case the contents of a plugin message changes.
      */
     public static final int CAPE_PLUGIN_MESSAGE_TYPE_VERSION = 1;
+    public static final int SKIN_INFO_PLUGIN_MESSAGE_TYPE_VERSION = 1;
+    public static final int SKIN_DATA_PLUGIN_MESSAGE_TYPE_VERSION = 1;
 
     public static final String SKIN_PLUGIN_MESSAGE_NAME = "geyserskin:skin";
     /**

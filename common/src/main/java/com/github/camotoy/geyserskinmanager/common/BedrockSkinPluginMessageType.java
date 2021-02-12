@@ -1,5 +1,7 @@
 package com.github.camotoy.geyserskinmanager.common;
 
 public enum BedrockSkinPluginMessageType {
-    SEND_CAPE
+    CAPE,
+    SKIN_INFORMATION,
+    SKIN_DATA
 }

@@ -28,7 +28,7 @@ public class PaperEventListener extends SpigotPlatformEventListener {
 
         if (skin != null || skinRetriever.isBedrockPlayer(event.getPlayer().getUniqueId())) {
             // Send cape even if the player has a skin or the skin cannot be sent
-            capeListener.onBedrockPlayerJoin(event.getPlayer());
+            modListener.onBedrockPlayerJoin(event.getPlayer(), skin);
         }
     }
 }
