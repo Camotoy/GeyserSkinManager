@@ -12,7 +12,7 @@ Known caveats:
 How to set up BungeeCord:
 
 - Install GeyserSkinManager-BungeeCord on your BungeeCord server
-- Install GeyserSkinManager-Spigot on all Spigot servers you wish to have the skin applied to. It is not required that the plugin be installed to all servers. Geyser-Spigot does *not* need to be installed.
+- Install GeyserSkinManager-Spigot on all Spigot servers you wish to have the skin applied to. It is not required that the plugin be installed to all servers. Geyser-Spigot should not be installed.
 - Done.
 
 Camotoy's Discord server: https://discord.gg/jNNC4CZtsN
