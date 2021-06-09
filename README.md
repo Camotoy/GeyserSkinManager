@@ -1,5 +1,7 @@
 # GeyserSkinManager
 
+# This plugin is no longer needed with Floodgate 2.0!
+
 There is currently no config - drop in and it works!
 
 Known caveats:
