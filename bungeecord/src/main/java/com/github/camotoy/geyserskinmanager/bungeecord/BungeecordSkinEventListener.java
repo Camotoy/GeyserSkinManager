@@ -15,11 +15,13 @@ import net.md_5.bungee.event.EventHandler;
 import java.util.UUID;
 
 public class BungeecordSkinEventListener extends SkinEventListener<ProxiedPlayer, Server> implements Listener, ProxyPluginMessageSend<Server> {
+    private final boolean showSkins;
     private final BungeecordBedrockSkinUtilityListener modListener;
 
-    public BungeecordSkinEventListener(GeyserSkinManager plugin) {
+    public BungeecordSkinEventListener(GeyserSkinManager plugin, boolean showSkins) {
         super(plugin.getDataFolder(), plugin.getLogger()::warning);
         this.modListener = new BungeecordBedrockSkinUtilityListener(database, skinRetriever);
+        this.showSkins = showSkins;
 
         plugin.getProxy().registerChannel(Constants.MOD_PLUGIN_MESSAGE_NAME);
         plugin.getProxy().getPluginManager().registerListener(plugin, this.modListener);
@@ -37,7 +39,7 @@ public class BungeecordSkinEventListener extends SkinEventListener<ProxiedPlayer
         }
 
         RawSkin skin = this.skinRetriever.getBedrockSkin(event.getPlayer().getUniqueId());
-        if (skin != null) {
+        if (skin != null && showSkins) {
             uploadOrRetrieveSkin(event.getPlayer(), event.getServer(), skin);
         }
         if (skin != null || this.skinRetriever.isBedrockPlayer(event.getPlayer().getUniqueId())) {

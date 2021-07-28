@@ -1,6 +1,7 @@
 package com.github.camotoy.geyserskinmanager.spigot;
 
 import com.github.camotoy.geyserskinmanager.common.Constants;
+import com.github.camotoy.geyserskinmanager.common.FloodgateUtil;
 import com.github.camotoy.geyserskinmanager.spigot.listener.BungeecordPluginMessageListener;
 import com.github.camotoy.geyserskinmanager.spigot.listener.SpigotPlatformEventListener;
 import com.github.camotoy.geyserskinmanager.spigot.listener.PaperEventListener;
@@ -19,13 +20,15 @@ public final class GeyserSkinManager extends JavaPlugin {
             getDataFolder().mkdirs();
         }
 
+        boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(getLogger()::warning);
+
         boolean bungeeCordMode = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") == null;
 
         if (!bungeeCordMode) {
             if (PaperLib.isPaper() && PaperLib.isVersion(12, 2)) {
-                this.listener = new PaperEventListener(this, bungeeCordMode);
+                this.listener = new PaperEventListener(this, !floodgatePresent);
             } else {
-                this.listener = new SpigotEventListener(this, bungeeCordMode);
+                this.listener = new SpigotEventListener(this, !floodgatePresent);
             }
 
             Bukkit.getPluginManager().registerEvents(listener, this);

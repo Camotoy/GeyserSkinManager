@@ -18,26 +18,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class VelocitySkinEventListener extends SkinEventListener<Player, ServerConnection> implements ProxyPluginMessageSend<ServerConnection> {
+    private final boolean showSkins;
     private final VelocityBedrockSkinUtilityListener modListener;
 
-    public VelocitySkinEventListener(ProxyServer server, GeyserSkinManager plugin, File skinDatabaseLocation, Logger logger) {
+    public VelocitySkinEventListener(ProxyServer server, GeyserSkinManager plugin, File skinDatabaseLocation, Logger logger, boolean showSkins) {
         super(skinDatabaseLocation, logger::warn);
+        this.showSkins = showSkins;
 
-        boolean useCapeListener = true;
-        try {
-            Class.forName("com.velocitypowered.api.event.player.PlayerChannelRegisterEvent");
-        } catch (ClassNotFoundException e) {
-            plugin.getLogger().warn("Please update Velocity in order to use the BedrockSkinUtility mod alongside this plugin!");
-            useCapeListener = false;
-        }
-
-        if (useCapeListener) {
-            this.modListener = new VelocityBedrockSkinUtilityListener(server, this.database, this.skinRetriever);
-            server.getEventManager().register(plugin, this.modListener);
-            server.getChannelRegistrar().register(VelocityConstants.MOD_PLUGIN_MESSAGE_NAME);
-        } else {
-            this.modListener = null;
-        }
+        this.modListener = new VelocityBedrockSkinUtilityListener(server, this.database, this.skinRetriever);
+        server.getEventManager().register(plugin, this.modListener);
+        server.getChannelRegistrar().register(VelocityConstants.MOD_PLUGIN_MESSAGE_NAME);
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -45,26 +35,26 @@ public class VelocitySkinEventListener extends SkinEventListener<Player, ServerC
     public void onServerConnected(ServerPostConnectEvent event) {
         if (event.getPreviousServer() == null) {
             boolean shouldApply = true;
-            for (GameProfile.Property property : event.getPlayer().getGameProfileProperties()) {
-                if (property.getName().equals("textures")) {
-                    // Don't overwrite existing textures
-                    shouldApply = false;
-                    break;
+            if (showSkins) {
+                for (GameProfile.Property property : event.getPlayer().getGameProfileProperties()) {
+                    if (property.getName().equals("textures")) {
+                        // Don't overwrite existing textures
+                        shouldApply = false;
+                        break;
+                    }
                 }
             }
 
             RawSkin skin = null;
             if (shouldApply) {
                 skin = this.skinRetriever.getBedrockSkin(event.getPlayer().getUniqueId());
-                if (skin != null) {
+                if (skin != null && showSkins) {
                     uploadOrRetrieveSkin(event.getPlayer(), null, skin);
                 }
             }
 
-            if (this.modListener != null) {
-                if (skin != null || skinRetriever.isBedrockPlayer(event.getPlayer().getUniqueId())) {
-                    this.modListener.onBedrockPlayerJoin(event.getPlayer(), skin);
-                }
+            if (skin != null || skinRetriever.isBedrockPlayer(event.getPlayer().getUniqueId())) {
+                this.modListener.onBedrockPlayerJoin(event.getPlayer(), skin);
             }
         }
     }

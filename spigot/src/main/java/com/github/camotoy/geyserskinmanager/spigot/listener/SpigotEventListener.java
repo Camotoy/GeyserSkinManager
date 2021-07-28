@@ -10,15 +10,15 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class SpigotEventListener extends SpigotPlatformEventListener {
 
-    public SpigotEventListener(GeyserSkinManager plugin, boolean bungeeCordMode) {
-        super(plugin, bungeeCordMode);
+    public SpigotEventListener(GeyserSkinManager plugin, boolean showSkins) {
+        super(plugin, showSkins);
     }
 
     @Override
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         RawSkin skin = skinRetriever.getBedrockSkin(event.getPlayer().getUniqueId());
-        if (skin != null) {
+        if (skin != null && this.skinApplier != null) {
             GameProfile gameProfile = GameProfileWrapper.getGameProfile(event.getPlayer());
 
             if (!gameProfile.getProperties().containsKey("textures")) {

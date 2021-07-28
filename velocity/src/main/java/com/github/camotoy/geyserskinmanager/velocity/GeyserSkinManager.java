@@ -1,5 +1,6 @@
 package com.github.camotoy.geyserskinmanager.velocity;
 
+import com.github.camotoy.geyserskinmanager.common.FloodgateUtil;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -33,7 +34,8 @@ public class GeyserSkinManager {
             //noinspection ResultOfMethodCallIgnored
             dataFolder.mkdirs();
         }
-        server.getEventManager().register(this, new VelocitySkinEventListener(server, this, dataFolder, logger));
+        boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(getLogger()::warn);
+        server.getEventManager().register(this, new VelocitySkinEventListener(server, this, dataFolder, logger, !floodgatePresent));
     }
 
     public Logger getLogger() {

@@ -19,19 +19,18 @@ public abstract class SpigotPlatformEventListener extends SkinEventListener<Play
     protected final GeyserSkinManager plugin;
     protected final SpigotSkinApplier skinApplier;
 
-    public SpigotPlatformEventListener(GeyserSkinManager plugin, boolean bungeeCordMode) {
+    public SpigotPlatformEventListener(GeyserSkinManager plugin, boolean showSkins) {
         super(plugin.getDataFolder(), plugin.getLogger()::warning);
         this.plugin = plugin;
 
-        if (bungeeCordMode) {
-            // BungeeCord takes care of the database, so we don't need to
-            this.modListener = null;
-        } else {
-            this.modListener = new SpigotBedrockSkinUtilityListener(this.plugin, this.database, this.skinRetriever);
-            Bukkit.getPluginManager().registerEvents(this.modListener, this.plugin);
-        }
+        this.modListener = new SpigotBedrockSkinUtilityListener(this.plugin, this.database, this.skinRetriever);
+        Bukkit.getPluginManager().registerEvents(this.modListener, this.plugin);
 
-        this.skinApplier = new SpigotSkinApplier(plugin);
+        if (showSkins) {
+            this.skinApplier = new SpigotSkinApplier(plugin);
+        } else {
+            this.skinApplier = null;
+        }
     }
 
     @EventHandler
