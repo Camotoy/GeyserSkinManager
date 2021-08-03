@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 @Plugin(
         id = "geyserskinmanager-velocity",
         name = "GeyserSkinManager-Velocity",
-        version = "1.4-SNAPSHOT",
+        version = "1.5-SNAPSHOT",
         authors = {"Camotoy"},
         dependencies = {@Dependency(id = "geyser")}
 )

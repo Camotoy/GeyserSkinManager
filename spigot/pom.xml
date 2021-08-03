@@ -7,7 +7,7 @@
     <parent>
         <artifactId>GeyserSkinManager</artifactId>
         <groupId>com.github.camotoy.geyserskinmanager</groupId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.5-SNAPSHOT</version>
     </parent>
 
     <name>GeyserSkinManager-Spigot</name>
@@ -39,11 +39,11 @@
                     <relocations>
                         <relocation>
                             <pattern>com.fasterxml.jackson</pattern>
-                            <shadedPattern>com.github.camotoy.relocations.jackson</shadedPattern>
+                            <shadedPattern>com.github.camotoy.geyserskinmanager.relocations.jackson</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>io.papermc.lib</pattern>
-                            <shadedPattern>com.github.camotoy.relocations.paperlib</shadedPattern>
+                            <shadedPattern>com.github.camotoy.geyserskinmanager.relocations.paperlib</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

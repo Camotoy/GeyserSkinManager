@@ -1,10 +1,13 @@
 package com.github.camotoy.geyserskinmanager.spigot.listener;
 
+import com.github.camotoy.geyserskinmanager.common.BedrockPluginMessageData;
 import com.github.camotoy.geyserskinmanager.common.Constants;
+import com.github.camotoy.geyserskinmanager.common.RawSkin;
 import com.github.camotoy.geyserskinmanager.common.SkinDatabase;
 import com.github.camotoy.geyserskinmanager.common.platform.BedrockSkinUtilityListener;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetriever;
 import com.github.camotoy.geyserskinmanager.spigot.GeyserSkinManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +28,22 @@ public class SpigotBedrockSkinUtilityListener extends BedrockSkinUtilityListener
         if (event.getChannel().equals(Constants.MOD_PLUGIN_MESSAGE_NAME)) {
             onModdedPlayerConfirm(event.getPlayer());
         }
+    }
+
+    @Override
+    public void onBedrockPlayerJoin(Player player, RawSkin skin) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            // Offload the data onto another thread
+            BedrockPluginMessageData data = getSkinAndCape(player.getUniqueId(), skin);
+            if (data != null) {
+                // ...But ensure this stuff is run on the main thread
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    for (Player moddedPlayer : moddedPlayers.values()) {
+                        sendPluginMessageData(moddedPlayer, data);
+                    }
+                });
+            }
+        });
     }
 
     @Override
