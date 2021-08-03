@@ -1,8 +1,10 @@
 # GeyserSkinManager
 
-# This plugin is no longer needed with Floodgate 2.0!
+### Primarily the server-side companion for the [BedrockSkinUtility](https://github.com/Camotoy/BedrockSkinUtility) Fabric mod.
 
-There is currently no config - drop in and it works!
+#### Skin visibility for non-modded players can be viewed without Floodgate installed, or by adding `-DGeyserSkinManager.ForceShowSkins=true` to your Java startup flags.
+ 
+Otherwise, there is currently no config - drop in and it works!
 
 Known caveats:
 
@@ -11,7 +13,7 @@ Known caveats:
 - If using with BungeeCord, Geyser-BungeeCord must be installed on the BungeeCord server.
 - Persona skins are not supported
 
-How to set up BungeeCord:
+How to set up BungeeCord/Velocity:
 
 - Install GeyserSkinManager-BungeeCord on your BungeeCord server
 - Install GeyserSkinManager-Spigot on all Spigot servers you wish to have the skin applied to. It is not required that the plugin be installed to all servers. Geyser-Spigot should not be installed.
