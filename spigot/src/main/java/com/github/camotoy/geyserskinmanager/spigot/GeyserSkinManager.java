@@ -1,5 +1,6 @@
 package com.github.camotoy.geyserskinmanager.spigot;
 
+import com.github.camotoy.geyserskinmanager.common.Configuration;
 import com.github.camotoy.geyserskinmanager.common.Constants;
 import com.github.camotoy.geyserskinmanager.common.FloodgateUtil;
 import com.github.camotoy.geyserskinmanager.spigot.listener.BungeecordPluginMessageListener;
@@ -10,6 +11,8 @@ import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+
 public final class GeyserSkinManager extends JavaPlugin {
     private SpigotPlatformEventListener listener;
 
@@ -19,9 +22,14 @@ public final class GeyserSkinManager extends JavaPlugin {
             //noinspection ResultOfMethodCallIgnored
             getDataFolder().mkdirs();
         }
+        File configFile = new File(getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            configFile.getParentFile().mkdirs();
+            saveResource("config.yml", false);
+        }
+        new Configuration().loadConfigFile(getDataFolder());
 
         boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(getLogger()::warning);
-
         boolean bungeeCordMode = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") == null;
 
         if (!bungeeCordMode) {

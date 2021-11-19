@@ -8,17 +8,19 @@ public final class FloodgateUtil {
      */
     public static boolean isFloodgatePresent(Consumer<String> warnFunction) {
         boolean floodgatePresent = false;
-
-        try {
-            // Should Floodgate be present, don't bother
-            Class.forName("org.geysermc.floodgate.api.FloodgateApi");
-            floodgatePresent = System.getProperty("GeyserSkinManager.ForceShowSkins") == null;
-            if (floodgatePresent) {
-                warnFunction.accept("Floodgate found on the server! Disabling skin services and only running mod interactions.");
-            } else {
-                warnFunction.accept("Showing skins despite Floodgate being installed!");
+        if (!(Configuration.forceSkin)) {
+            try {
+                // Should Floodgate be present, don't bother
+                Class.forName("org.geysermc.floodgate.api.FloodgateApi");
+                floodgatePresent = System.getProperty("GeyserSkinManager.ForceShowSkins") == null;
+                if (floodgatePresent) {
+                    warnFunction.accept("Floodgate found on the server! Disabling skin services and only running mod interactions.");
+                } else {
+                    warnFunction.accept("Showing skins despite Floodgate being installed!");
+                }
+            } catch (Exception ignored) {
             }
-        } catch (Exception ignored) {}
+        }
 
         return floodgatePresent;
     }
