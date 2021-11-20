@@ -4,7 +4,7 @@ import com.github.camotoy.geyserskinmanager.common.*;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetriever;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.GeyserSkinRetriever;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -18,7 +18,7 @@ public abstract class SkinEventListener<P, S> implements PlatformPlayerUuidSuppo
     protected final SkinUploader skinUploader = new SkinUploader();
     protected final Consumer<String> warningLoggingFunction;
 
-    public SkinEventListener(File skinDatabaseLocation, Consumer<String> warningLoggingFunction) {
+    public SkinEventListener(Path skinDatabaseLocation, Consumer<String> warningLoggingFunction) {
         this.database = new SkinDatabase(skinDatabaseLocation);
         this.skinRetriever = new GeyserSkinRetriever();
         this.warningLoggingFunction = warningLoggingFunction;

@@ -35,11 +35,6 @@
             <version>2.9.8</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.spongepowered</groupId>
-            <artifactId>configurate-yaml</artifactId>
-            <version>4.0.0</version>
-        </dependency>
     </dependencies>
 
     <artifactId>common</artifactId>

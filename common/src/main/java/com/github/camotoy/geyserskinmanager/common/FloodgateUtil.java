@@ -3,12 +3,13 @@ package com.github.camotoy.geyserskinmanager.common;
 import java.util.function.Consumer;
 
 public final class FloodgateUtil {
+    private static boolean forceSkin;
     /**
      * @return true if Floodgate is present on the server.
      */
     public static boolean isFloodgatePresent(Consumer<String> warnFunction) {
         boolean floodgatePresent = false;
-        if (!(Configuration.forceSkin)) {
+        if (!(forceSkin)) {
             try {
                 // Should Floodgate be present, don't bother
                 Class.forName("org.geysermc.floodgate.api.FloodgateApi");
@@ -20,8 +21,14 @@ public final class FloodgateUtil {
                 }
             } catch (Exception ignored) {
             }
+        } else {
+            warnFunction.accept("ForceShowSkins active, Floodgate check is bypassed!");
         }
 
         return floodgatePresent;
+    }
+
+    public static void setForceSkin(boolean forceSkin) {
+        FloodgateUtil.forceSkin = forceSkin;
     }
 }
