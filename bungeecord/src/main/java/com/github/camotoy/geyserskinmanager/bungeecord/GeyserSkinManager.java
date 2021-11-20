@@ -39,8 +39,6 @@ public final class GeyserSkinManager extends Plugin {
             getDataFolder().mkdir();
 
         File file = new File(getDataFolder(), "config.yml");
-
-
         if (!file.exists()) {
             try (InputStream in = getResourceAsStream("config.yml")) {
                 Files.copy(in, file.toPath());

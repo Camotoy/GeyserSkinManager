@@ -26,7 +26,6 @@ import java.nio.file.Path;
 )
 public class GeyserSkinManager {
 
-
     private final ProxyServer server;
     private final Path dataDirectory;
     private final Toml config;
