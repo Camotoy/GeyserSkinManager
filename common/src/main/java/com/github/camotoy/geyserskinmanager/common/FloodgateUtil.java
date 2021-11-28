@@ -4,10 +4,12 @@ import java.util.function.Consumer;
 
 public final class FloodgateUtil {
     private static boolean forceSkin;
+
     /**
      * @return true if Floodgate is present on the server.
      */
     public static boolean isFloodgatePresent(Consumer<String> warnFunction) {
+
         boolean floodgatePresent = false;
         if (!(forceSkin)) {
             try {
