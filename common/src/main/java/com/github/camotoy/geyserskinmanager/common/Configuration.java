@@ -1,5 +1,6 @@
 package com.github.camotoy.geyserskinmanager.common;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
@@ -9,22 +10,22 @@ import java.nio.file.Path;
 
 public class Configuration {
 
-    private Boolean ForceShowSkins;
+    @JsonProperty("force-show-skins")
+    private Boolean forceShowSkins;
 
     public Configuration(Path dataDirectory) throws IOException {
         createConfig(dataDirectory);
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        Configuration config = mapper.readValue(new File(dataDirectory + "config.yml"), Configuration.class);
+        Configuration config = mapper.readValue(new File(dataDirectory + "\\" + "config.yml"), Configuration.class);
         if (config.getForceShowSkins()) {
             FloodgateUtil.setForceSkin(true);
         }
     }
     public void SetForceSkin(Boolean forceSkin) {
-        this.ForceShowSkins = forceSkin;
+        this.forceShowSkins = forceSkin;
     }
-
     public Boolean getForceShowSkins() {
-        return ForceShowSkins;
+        return forceShowSkins;
     }
 
     /**
