@@ -1,32 +1,40 @@
 package com.github.camotoy.geyserskinmanager.common;
 
-import com.moandjiezana.toml.Toml;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 public class Configuration {
 
-    public Configuration(Path dataDirectory) {
-        Toml config = loadConfig(dataDirectory);
-        if (Objects.requireNonNull(config).getBoolean("ForceShowSkins")){
+    private Boolean ForceShowSkins;
+
+    public Configuration(Path dataDirectory) throws IOException {
+        createConfig(dataDirectory);
+        final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        Configuration config = mapper.readValue(new File(dataDirectory + "config.yml"), Configuration.class);
+        if (config.getForceShowSkins()) {
             FloodgateUtil.setForceSkin(true);
         }
+    }
+    public void SetForceSkin(Boolean forceSkin) {
+        this.ForceShowSkins = forceSkin;
+    }
+
+    public Boolean getForceShowSkins() {
+        return ForceShowSkins;
     }
 
     /**
      * Load GeyserSkinManager config
      *
      * @param path The config's directory
-     * @return The configuration
      */
-    private Toml loadConfig(Path path) {
+    private void createConfig(Path path) {
         File folder = path.toFile();
-        File file = new File(folder, "config.toml");
+        File file = new File(folder, "config.yml");
 
         if (!file.exists()) {
             if (!file.getParentFile().exists()) {
@@ -40,9 +48,7 @@ public class Configuration {
                 }
             } catch (IOException exception) {
                 exception.printStackTrace();
-                return null;
             }
         }
-        return new Toml().read(file);
     }
 }

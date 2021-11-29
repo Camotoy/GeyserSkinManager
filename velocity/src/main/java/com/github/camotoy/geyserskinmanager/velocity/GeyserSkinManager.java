@@ -11,6 +11,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 @Plugin(
@@ -36,7 +37,11 @@ public class GeyserSkinManager {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        new Configuration(this.dataDirectory);
+        try {
+            new Configuration(this.dataDirectory);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(getLogger()::warn);
         server.getEventManager().register(this, new VelocitySkinEventListener(server, this, dataDirectory, logger, !floodgatePresent));
     }
