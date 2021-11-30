@@ -11,11 +11,8 @@ public final class GeyserSkinManager extends Plugin {
 
     @Override
     public void onEnable() {
-        try {
-            new Configuration(this.getDataFolder().toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Configuration.dataDirectory = this.getDataFolder().toPath();
+        new Configuration();
         boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(getLogger()::warning);
         this.listener = new BungeecordSkinEventListener(this, !floodgatePresent);
         getProxy().getPluginManager().registerListener(this, this.listener);

@@ -37,11 +37,8 @@ public class GeyserSkinManager {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        try {
-            new Configuration(this.dataDirectory);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Configuration.dataDirectory = this.dataDirectory;
+        new Configuration();
         boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(getLogger()::warn);
         server.getEventManager().register(this, new VelocitySkinEventListener(server, this, dataDirectory, logger, !floodgatePresent));
     }

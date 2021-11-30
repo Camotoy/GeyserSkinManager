@@ -18,11 +18,8 @@ public final class GeyserSkinManager extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        try {
-            new Configuration(this.getDataFolder().toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Configuration.dataDirectory = this.getDataFolder().toPath();
+        new Configuration();
         boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(getLogger()::warning);
         boolean bungeeCordMode = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") == null;
 
