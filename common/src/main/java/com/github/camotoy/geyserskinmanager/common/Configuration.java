@@ -8,9 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Configuration {
-    public static Path dataDirectory;
 
-    public Configuration() {
+    public Configuration(Path dataDirectory) {
         createConfig(dataDirectory);
         // Read config and boolean.
         try {

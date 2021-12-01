@@ -11,15 +11,12 @@ import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
-
 public final class GeyserSkinManager extends JavaPlugin {
     private SpigotPlatformEventListener listener;
 
     @Override
     public void onEnable() {
-        Configuration.dataDirectory = this.getDataFolder().toPath();
-        new Configuration();
+        new Configuration(this.getDataFolder().toPath());
         boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(getLogger()::warning);
         boolean bungeeCordMode = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") == null;
 
