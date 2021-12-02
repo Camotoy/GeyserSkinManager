@@ -2,7 +2,7 @@ package com.github.camotoy.geyserskinmanager.common.platform;
 
 import com.github.camotoy.geyserskinmanager.common.*;
 import com.github.camotoy.geyserskinmanager.common.skinretriever.BedrockSkinRetriever;
-import org.geysermc.connector.utils.MathUtils;
+import org.geysermc.geyser.util.MathUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

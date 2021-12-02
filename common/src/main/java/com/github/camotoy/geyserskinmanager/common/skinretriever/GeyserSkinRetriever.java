@@ -3,9 +3,9 @@ package com.github.camotoy.geyserskinmanager.common.skinretriever;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.camotoy.geyserskinmanager.common.RawCape;
 import com.github.camotoy.geyserskinmanager.common.RawSkin;
-import org.geysermc.connector.GeyserConnector;
-import org.geysermc.connector.network.session.GeyserSession;
-import org.geysermc.connector.network.session.auth.BedrockClientData;
+import org.geysermc.geyser.GeyserImpl;
+import org.geysermc.geyser.session.GeyserSession;
+import org.geysermc.geyser.session.auth.BedrockClientData;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -16,7 +16,7 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
 
     @Override
     public RawCape getBedrockCape(UUID uuid) {
-        GeyserSession session = GeyserConnector.getInstance().getPlayerByUuid(uuid);
+        GeyserSession session = GeyserImpl.getInstance().connectionByUuid(uuid);
         if (session == null) {
             return null;
         }
@@ -32,8 +32,8 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
     @Override
     public RawSkin getBedrockSkin(String name) {
         GeyserSession session = null;
-        for (GeyserSession otherSession : GeyserConnector.getInstance().getPlayers()) {
-            if (name.equals(otherSession.getName())) {
+        for (GeyserSession otherSession : GeyserImpl.getInstance().getSessionManager().getSessions().values()) {
+            if (name.equals(otherSession.name())) {
                 session = otherSession;
                 break;
             }
@@ -47,7 +47,7 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
 
     @Override
     public RawSkin getBedrockSkin(UUID uuid) {
-        GeyserSession session = GeyserConnector.getInstance().getPlayerByUuid(uuid);
+        GeyserSession session = GeyserImpl.getInstance().connectionByUuid(uuid);
         if (session == null) {
             return null;
         }
@@ -57,7 +57,7 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
 
     @Override
     public boolean isBedrockPlayer(UUID uuid) {
-        return GeyserConnector.getInstance().getPlayerByUuid(uuid) != null;
+        return GeyserImpl.getInstance().connectionByUuid(uuid) != null;
     }
 
     /**
@@ -66,7 +66,7 @@ public class GeyserSkinRetriever implements BedrockSkinRetriever {
     private RawSkin getImage(BedrockClientData clientData) {
         byte[] image = Base64.getDecoder().decode(clientData.getSkinData());
         if (image.length > (128 * 128 * 4) || clientData.isPersonaSkin()) {
-            System.out.println("Persona skins are not yet supported, sorry!");
+            //System.out.println("Persona skins are not yet supported, sorry!");
             return null;
         }
         String geometryName = new String(Base64.getDecoder().decode(clientData.getGeometryName()), StandardCharsets.UTF_8);
