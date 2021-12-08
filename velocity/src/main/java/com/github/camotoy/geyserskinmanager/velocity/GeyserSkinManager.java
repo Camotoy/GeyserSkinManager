@@ -21,7 +21,6 @@ import java.nio.file.Path;
         dependencies = {@Dependency(id = "geyser")}
 )
 public class GeyserSkinManager {
-
     private final ProxyServer server;
     private final Path dataDirectory;
 
@@ -29,15 +28,15 @@ public class GeyserSkinManager {
     private Logger logger;
 
     @Inject
-    public GeyserSkinManager(ProxyServer server,  @DataDirectory final Path folder) {
-        this.server  = server;
+    public GeyserSkinManager(ProxyServer server, @DataDirectory final Path folder) {
+        this.server = server;
         this.dataDirectory = folder;
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        new Configuration(this.dataDirectory);
-        boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(getLogger()::warn);
+        Configuration config = Configuration.create(this.dataDirectory);
+        boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(config, getLogger()::warn);
         server.getEventManager().register(this, new VelocitySkinEventListener(server, this, dataDirectory, logger, !floodgatePresent));
     }
 
