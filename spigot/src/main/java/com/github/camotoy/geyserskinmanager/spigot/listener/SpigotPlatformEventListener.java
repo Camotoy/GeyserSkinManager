@@ -20,7 +20,7 @@ public abstract class SpigotPlatformEventListener extends SkinEventListener<Play
     protected final SpigotSkinApplier skinApplier;
 
     public SpigotPlatformEventListener(GeyserSkinManager plugin, boolean showSkins) {
-        super(plugin.getDataFolder(), plugin.getLogger()::warning);
+        super(plugin.getDataFolder().toPath(), plugin.getLogger()::warning);
         this.plugin = plugin;
 
         this.modListener = new SpigotBedrockSkinUtilityListener(this.plugin, this.database, this.skinRetriever);

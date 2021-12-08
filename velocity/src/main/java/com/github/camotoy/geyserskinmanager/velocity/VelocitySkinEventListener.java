@@ -12,7 +12,7 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.util.GameProfile;
 import org.slf4j.Logger;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +21,7 @@ public class VelocitySkinEventListener extends SkinEventListener<Player, ServerC
     private final boolean showSkins;
     private final VelocityBedrockSkinUtilityListener modListener;
 
-    public VelocitySkinEventListener(ProxyServer server, GeyserSkinManager plugin, File skinDatabaseLocation, Logger logger, boolean showSkins) {
+    public VelocitySkinEventListener(ProxyServer server, GeyserSkinManager plugin, Path skinDatabaseLocation, Logger logger, boolean showSkins) {
         super(skinDatabaseLocation, logger::warn);
         this.showSkins = showSkins;
 

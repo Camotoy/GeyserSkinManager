@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,8 +27,8 @@ public class SkinDatabase {
             .build();
     private final File baseFileLocation;
 
-    public SkinDatabase(File baseFileLocation) {
-        this.baseFileLocation = baseFileLocation.toPath().resolve("users").toFile();
+    public SkinDatabase(Path baseFileLocation) {
+        this.baseFileLocation = baseFileLocation.resolve("users").toFile();
         if (!this.baseFileLocation.exists()) {
             //noinspection ResultOfMethodCallIgnored
             this.baseFileLocation.mkdir();

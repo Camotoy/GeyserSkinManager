@@ -1,5 +1,6 @@
 package com.github.camotoy.geyserskinmanager.spigot;
 
+import com.github.camotoy.geyserskinmanager.common.Configuration;
 import com.github.camotoy.geyserskinmanager.common.Constants;
 import com.github.camotoy.geyserskinmanager.common.FloodgateUtil;
 import com.github.camotoy.geyserskinmanager.spigot.listener.BungeecordPluginMessageListener;
@@ -15,13 +16,8 @@ public final class GeyserSkinManager extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!getDataFolder().exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            getDataFolder().mkdirs();
-        }
-
+        new Configuration(this.getDataFolder().toPath());
         boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(getLogger()::warning);
-
         boolean bungeeCordMode = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") == null;
 
         if (!bungeeCordMode) {

@@ -1,5 +1,6 @@
 package com.github.camotoy.geyserskinmanager.bungeecord;
 
+import com.github.camotoy.geyserskinmanager.common.Configuration;
 import com.github.camotoy.geyserskinmanager.common.FloodgateUtil;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -8,11 +9,7 @@ public final class GeyserSkinManager extends Plugin {
 
     @Override
     public void onEnable() {
-        if (!getDataFolder().exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            getDataFolder().mkdirs();
-        }
-
+        new Configuration(this.getDataFolder().toPath());
         boolean floodgatePresent = FloodgateUtil.isFloodgatePresent(getLogger()::warning);
         this.listener = new BungeecordSkinEventListener(this, !floodgatePresent);
         getProxy().getPluginManager().registerListener(this, this.listener);

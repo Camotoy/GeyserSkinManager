@@ -19,7 +19,7 @@ public class BungeecordSkinEventListener extends SkinEventListener<ProxiedPlayer
     private final BungeecordBedrockSkinUtilityListener modListener;
 
     public BungeecordSkinEventListener(GeyserSkinManager plugin, boolean showSkins) {
-        super(plugin.getDataFolder(), plugin.getLogger()::warning);
+        super(plugin.getDataFolder().toPath(), plugin.getLogger()::warning);
         this.modListener = new BungeecordBedrockSkinUtilityListener(database, skinRetriever);
         this.showSkins = showSkins;
 
