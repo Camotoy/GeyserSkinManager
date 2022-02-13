@@ -2,9 +2,7 @@
 
 ### Primarily the server-side companion for the [BedrockSkinUtility](https://github.com/Camotoy/BedrockSkinUtility) Fabric mod.
 
-#### Skin visibility for non-modded players can be viewed without Floodgate installed, or by adding `-DGeyserSkinManager.ForceShowSkins=true` to your Java startup flags.
- 
-Otherwise, there is currently no config - drop in and it works!
+#### Skin visibility for non-modded players can be viewed without Floodgate installed, Or by changing the config option "force-show-skins:" from false to true.
 
 Known caveats:
 
