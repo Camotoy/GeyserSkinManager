@@ -37,7 +37,7 @@ public class VelocitySkinEventListener extends SkinEventListener<Player, ServerC
             boolean shouldApply = true;
             if (showSkins) {
                 for (GameProfile.Property property : event.getPlayer().getGameProfileProperties()) {
-                    if (property.getName().equals("textures")) {
+                    if (property.getName().equals("textures") && !property.getValue().isEmpty()) {
                         // Don't overwrite existing textures
                         shouldApply = false;
                         break;
