@@ -98,6 +98,10 @@
                             <pattern>com.fasterxml.jackson</pattern>
                             <shadedPattern>com.github.camotoy.geyserskinmanager.relocations.jackson</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>org.yaml.snakeyaml</pattern>
+                            <shadedPattern>com.github.camotoy.geyserskinmanager.relocations.snakeyaml</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>

@@ -45,6 +45,10 @@
                             <pattern>io.papermc.lib</pattern>
                             <shadedPattern>com.github.camotoy.geyserskinmanager.relocations.paperlib</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>org.yaml.snakeyaml</pattern>
+                            <shadedPattern>com.github.camotoy.geyserskinmanager.relocations.snakeyaml</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>
