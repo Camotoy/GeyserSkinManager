@@ -1,5 +1,6 @@
 package com.github.camotoy.geyserskinmanager.velocity;
 
+import com.github.camotoy.geyserskinmanager.common.Constants;
 import com.github.camotoy.geyserskinmanager.common.RawSkin;
 import com.github.camotoy.geyserskinmanager.common.SkinEntry;
 import com.github.camotoy.geyserskinmanager.common.platform.ProxyPluginMessageSend;
@@ -37,7 +38,7 @@ public class VelocitySkinEventListener extends SkinEventListener<Player, ServerC
             boolean shouldApply = true;
             if (showSkins) {
                 for (GameProfile.Property property : event.getPlayer().getGameProfileProperties()) {
-                    if (property.getName().equals("textures") && !property.getValue().isEmpty()) {
+                    if (property.getName().equals("textures") && (!property.getValue().isEmpty() && !property.getValue().equals(Constants.FLOODGATE_STEVE_SKIN))) {
                         // Don't overwrite existing textures
                         shouldApply = false;
                         break;
