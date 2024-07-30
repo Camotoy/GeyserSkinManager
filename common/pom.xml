@@ -8,6 +8,19 @@
         <version>1.8</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+         
+    <repositories>
+         <repository>
+            <id>opencollab-snapshot-repo</id>
+            <url>https://repo.opencollab.dev/maven-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <properties>
         <jackson.version>2.15.2</jackson.version>
